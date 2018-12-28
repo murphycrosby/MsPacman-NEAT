@@ -7,20 +7,34 @@
 //
 
 #import "Game.h"
+#import <IOKit/hid/IOHIDValue.h>
 
 @implementation Game
 
-- (id) init
+@synthesize keyboard;
+@synthesize logLevel;
+
+- (id) init: (int) logLevel
 {
-    NSLog(@"init :: start");
     self = [super init];
+    
+    self.logLevel = logLevel;
+    
+    if(self.logLevel >= 3) {
+        NSLog(@"Game :: init :: start");
+    }
+    self.keyboard = [[Keyboard alloc] init:1];
     
     return self;
 }
 
 - (void) play
 {
-    NSLog(@"play :: start");
+    if(logLevel >= 3) {
+        NSLog(@"Game :: play :: start");
+    }
+    
+    [keyboard sendKey:kHIDUsage_KeyboardA];
 }
 
 @end

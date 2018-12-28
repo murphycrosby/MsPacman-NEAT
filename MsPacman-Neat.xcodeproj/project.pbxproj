@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		41C110E621D444DB00E2C5C0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 41C110E521D444DB00E2C5C0 /* main.m */; };
 		41C110F521D5887200E2C5C0 /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = 41C110F421D5887200E2C5C0 /* Game.m */; };
+		41C110FA21D58DD600E2C5C0 /* Keyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41C110F921D58DD600E2C5C0 /* Keyboard.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,10 @@
 		41C110E521D444DB00E2C5C0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		41C110F321D5887200E2C5C0 /* Game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
 		41C110F421D5887200E2C5C0 /* Game.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Game.m; sourceTree = "<group>"; };
+		41C110F921D58DD600E2C5C0 /* Keyboard.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Keyboard.mm; sourceTree = "<group>"; };
+		41C110FB21D58DE600E2C5C0 /* Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Keyboard.h; sourceTree = "<group>"; };
+		41C110FC21D58E8D00E2C5C0 /* karabiner_virtual_hid_device_methods.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = karabiner_virtual_hid_device_methods.hpp; sourceTree = "<group>"; };
+		41C110FD21D58E8D00E2C5C0 /* karabiner_virtual_hid_device.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = karabiner_virtual_hid_device.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +49,7 @@
 		41C110D921D444DB00E2C5C0 = {
 			isa = PBXGroup;
 			children = (
+				41C110FF21D5A68C00E2C5C0 /* Neat */,
 				41C110E421D444DB00E2C5C0 /* MsPacman-Neat */,
 				41C110E321D444DB00E2C5C0 /* Products */,
 			);
@@ -71,8 +77,19 @@
 		41C110EC21D5877100E2C5C0 /* Keyboard */ = {
 			isa = PBXGroup;
 			children = (
+				41C110FC21D58E8D00E2C5C0 /* karabiner_virtual_hid_device_methods.hpp */,
+				41C110FD21D58E8D00E2C5C0 /* karabiner_virtual_hid_device.hpp */,
+				41C110F921D58DD600E2C5C0 /* Keyboard.mm */,
+				41C110FB21D58DE600E2C5C0 /* Keyboard.h */,
 			);
 			path = Keyboard;
+			sourceTree = "<group>";
+		};
+		41C110FF21D5A68C00E2C5C0 /* Neat */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Neat;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -133,6 +150,7 @@
 			files = (
 				41C110E621D444DB00E2C5C0 /* main.m in Sources */,
 				41C110F521D5887200E2C5C0 /* Game.m in Sources */,
+				41C110FA21D58DD600E2C5C0 /* Keyboard.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

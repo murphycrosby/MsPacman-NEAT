@@ -7,12 +7,19 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Keyboard/Keyboard.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Game : NSObject
+@interface Game : NSObject {
+    Keyboard *keyboard;
+    int logLevel;
+}
 
-- (id)init;
+@property (nonatomic,retain) Keyboard *keyboard;
+@property (nonatomic,readwrite) int logLevel;
+
+- (id)init: (int)logLevel;
 - (void) play;
 
 @end

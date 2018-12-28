@@ -13,7 +13,7 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         NSLog(@"Hello, World!");
         
-        Game* g = [[Game alloc] init];
+        Game* g = [[Game alloc] init:1];
         [g play];
         
         NSLog(@"Goodbye World!");
