@@ -19,10 +19,9 @@
 @property (nonatomic) io_service_t service;
 @property (nonatomic) int logLevel;
 
-- (id)init: (int) logLevel;
+- (id)init: (int) logLvl;
 - (BOOL) sendKey: (uint8_t) key;
 
 @end
-
 
 #endif /* Keyboard_h */

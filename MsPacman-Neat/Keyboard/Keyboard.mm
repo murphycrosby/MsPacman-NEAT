@@ -17,8 +17,14 @@
 @synthesize service;
 @synthesize logLevel;
 
-- (id)init: (int) logLevel {
-    self.logLevel = logLevel;
+- (id)init: (int) logLvl {
+    
+    self = [super init];
+    if (!self) {
+        return self;
+    }
+    
+    logLevel = logLvl;
     
     if(self.logLevel >= 3) {
         NSLog(@"Keyboard :: init :: start");
@@ -72,8 +78,6 @@
     BOOL ret = TRUE;
     pqrs::karabiner_virtual_hid_device::hid_report::keyboard_input report;
     
-    [NSThread sleepForTimeInterval:5.0f];
-    printf("sending A\n");
     //key = kHIDUsage_KeyboardA;
     report.keys.insert(key);
     kern_return_t kr = pqrs::karabiner_virtual_hid_device_methods::post_keyboard_input_report(connect, report);
@@ -82,6 +86,12 @@
         if(logLevel >= 2) {
             NSLog(@"Keyboard :: post_keyboard_input_report :: ERROR\n");
         }
+    }
+    report.keys.erase(key);
+    [NSThread sleepForTimeInterval:0.1f];
+    kr = pqrs::karabiner_virtual_hid_device_methods::post_keyboard_input_report(connect, report);
+    if (kr != KERN_SUCCESS) {
+        printf("post_keyboard_input_report error\n");
     }
     
     return ret;

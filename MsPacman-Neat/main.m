@@ -13,8 +13,9 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         NSLog(@"Hello, World!");
         
-        Game* g = [[Game alloc] init:1];
-        [g play];
+        Game* g = [[Game alloc] init:3];
+        [g playEvolve: 1];
+        g = nil;
         
         NSLog(@"Goodbye World!");
     }

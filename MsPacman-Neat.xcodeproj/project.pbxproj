@@ -7,6 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4144226221DD60F5008795C5 /* GenomeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144226121DD60F5008795C5 /* GenomeNode.m */; };
+		4144226521DD6158008795C5 /* GenomeLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144226421DD6158008795C5 /* GenomeLink.m */; };
+		4144226821DD617D008795C5 /* Genome.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144226721DD617D008795C5 /* Genome.m */; };
+		4144226C21DD61C5008795C5 /* Innovation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144226B21DD61C5008795C5 /* Innovation.m */; };
+		4144227021DD6776008795C5 /* InnovationDb.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144226F21DD6776008795C5 /* InnovationDb.m */; };
+		4144227321DD7B26008795C5 /* Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144227221DD7B26008795C5 /* Utilities.m */; };
+		4144227821DD9A67008795C5 /* Population.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144227721DD9A67008795C5 /* Population.m */; };
+		4144227B21DD9F28008795C5 /* Species.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144227A21DD9F28008795C5 /* Species.m */; };
+		4144227D21DD9FBB008795C5 /* Organism.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144227C21DD9FBB008795C5 /* Organism.m */; };
+		4144228121DDA2C1008795C5 /* Network.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144228021DDA2C1008795C5 /* Network.m */; };
+		4144228521DDA427008795C5 /* PhenomeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144228421DDA427008795C5 /* PhenomeNode.m */; };
+		4144228721DDA48C008795C5 /* PhenomeLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144228621DDA48C008795C5 /* PhenomeLink.m */; };
+		4144228C21E1501F008795C5 /* Screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144228B21E1501F008795C5 /* Screenshot.m */; };
+		4144228E21E1542D008795C5 /* WindowListApplierData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144228D21E1542D008795C5 /* WindowListApplierData.m */; };
+		4144229321E2A15C008795C5 /* MsPacman.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144229221E2A15C008795C5 /* MsPacman.m */; };
 		41C110E621D444DB00E2C5C0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 41C110E521D444DB00E2C5C0 /* main.m */; };
 		41C110F521D5887200E2C5C0 /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = 41C110F421D5887200E2C5C0 /* Game.m */; };
 		41C110FA21D58DD600E2C5C0 /* Keyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41C110F921D58DD600E2C5C0 /* Keyboard.mm */; };
@@ -25,6 +40,36 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4144226121DD60F5008795C5 /* GenomeNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GenomeNode.m; sourceTree = "<group>"; };
+		4144226321DD612C008795C5 /* GenomeNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenomeNode.h; sourceTree = "<group>"; };
+		4144226421DD6158008795C5 /* GenomeLink.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GenomeLink.m; sourceTree = "<group>"; };
+		4144226621DD616A008795C5 /* GenomeLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenomeLink.h; sourceTree = "<group>"; };
+		4144226721DD617D008795C5 /* Genome.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Genome.m; sourceTree = "<group>"; };
+		4144226A21DD619A008795C5 /* Genome.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Genome.h; sourceTree = "<group>"; };
+		4144226B21DD61C5008795C5 /* Innovation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Innovation.m; sourceTree = "<group>"; };
+		4144226D21DD61D2008795C5 /* Innovation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Innovation.h; sourceTree = "<group>"; };
+		4144226F21DD6776008795C5 /* InnovationDb.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InnovationDb.m; sourceTree = "<group>"; };
+		4144227121DD679B008795C5 /* InnovationDb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InnovationDb.h; sourceTree = "<group>"; };
+		4144227221DD7B26008795C5 /* Utilities.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Utilities.m; sourceTree = "<group>"; };
+		4144227421DD7B34008795C5 /* Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
+		4144227621DD9946008795C5 /* Population.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Population.h; sourceTree = "<group>"; };
+		4144227721DD9A67008795C5 /* Population.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Population.m; sourceTree = "<group>"; };
+		4144227921DD9F0D008795C5 /* Species.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Species.h; sourceTree = "<group>"; };
+		4144227A21DD9F28008795C5 /* Species.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Species.m; sourceTree = "<group>"; };
+		4144227C21DD9FBB008795C5 /* Organism.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Organism.m; sourceTree = "<group>"; };
+		4144227E21DD9FC9008795C5 /* Organism.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Organism.h; sourceTree = "<group>"; };
+		4144228021DDA2C1008795C5 /* Network.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Network.m; sourceTree = "<group>"; };
+		4144228221DDA2CB008795C5 /* Network.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Network.h; sourceTree = "<group>"; };
+		4144228321DDA3C7008795C5 /* PhenomeNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhenomeNode.h; sourceTree = "<group>"; };
+		4144228421DDA427008795C5 /* PhenomeNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PhenomeNode.m; sourceTree = "<group>"; };
+		4144228621DDA48C008795C5 /* PhenomeLink.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PhenomeLink.m; sourceTree = "<group>"; };
+		4144228821DDA4EA008795C5 /* PhenomeLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhenomeLink.h; sourceTree = "<group>"; };
+		4144228A21E1500E008795C5 /* Screenshot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Screenshot.h; sourceTree = "<group>"; };
+		4144228B21E1501F008795C5 /* Screenshot.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Screenshot.m; sourceTree = "<group>"; };
+		4144228D21E1542D008795C5 /* WindowListApplierData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WindowListApplierData.m; sourceTree = "<group>"; };
+		4144228F21E15453008795C5 /* WindowListApplierData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowListApplierData.h; sourceTree = "<group>"; };
+		4144229121E2A14C008795C5 /* MsPacman.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MsPacman.h; sourceTree = "<group>"; };
+		4144229221E2A15C008795C5 /* MsPacman.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MsPacman.m; sourceTree = "<group>"; };
 		41C110E221D444DB00E2C5C0 /* MsPacman-Neat */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "MsPacman-Neat"; sourceTree = BUILT_PRODUCTS_DIR; };
 		41C110E521D444DB00E2C5C0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		41C110F321D5887200E2C5C0 /* Game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
@@ -46,6 +91,69 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4144226E21DD6202008795C5 /* GenomeType */ = {
+			isa = PBXGroup;
+			children = (
+				4144226321DD612C008795C5 /* GenomeNode.h */,
+				4144226121DD60F5008795C5 /* GenomeNode.m */,
+				4144226621DD616A008795C5 /* GenomeLink.h */,
+				4144226421DD6158008795C5 /* GenomeLink.m */,
+				4144226A21DD619A008795C5 /* Genome.h */,
+				4144226721DD617D008795C5 /* Genome.m */,
+				4144226D21DD61D2008795C5 /* Innovation.h */,
+				4144226B21DD61C5008795C5 /* Innovation.m */,
+				4144227121DD679B008795C5 /* InnovationDb.h */,
+				4144226F21DD6776008795C5 /* InnovationDb.m */,
+			);
+			path = GenomeType;
+			sourceTree = "<group>";
+		};
+		4144227521DD9901008795C5 /* Populations */ = {
+			isa = PBXGroup;
+			children = (
+				4144227E21DD9FC9008795C5 /* Organism.h */,
+				4144227C21DD9FBB008795C5 /* Organism.m */,
+				4144227621DD9946008795C5 /* Population.h */,
+				4144227721DD9A67008795C5 /* Population.m */,
+				4144227921DD9F0D008795C5 /* Species.h */,
+				4144227A21DD9F28008795C5 /* Species.m */,
+			);
+			path = Populations;
+			sourceTree = "<group>";
+		};
+		4144227F21DDA286008795C5 /* PhenomeType */ = {
+			isa = PBXGroup;
+			children = (
+				4144228221DDA2CB008795C5 /* Network.h */,
+				4144228021DDA2C1008795C5 /* Network.m */,
+				4144228821DDA4EA008795C5 /* PhenomeLink.h */,
+				4144228621DDA48C008795C5 /* PhenomeLink.m */,
+				4144228321DDA3C7008795C5 /* PhenomeNode.h */,
+				4144228421DDA427008795C5 /* PhenomeNode.m */,
+			);
+			path = PhenomeType;
+			sourceTree = "<group>";
+		};
+		4144228921E14FF0008795C5 /* Screenshot */ = {
+			isa = PBXGroup;
+			children = (
+				4144228A21E1500E008795C5 /* Screenshot.h */,
+				4144228B21E1501F008795C5 /* Screenshot.m */,
+				4144228F21E15453008795C5 /* WindowListApplierData.h */,
+				4144228D21E1542D008795C5 /* WindowListApplierData.m */,
+			);
+			path = Screenshot;
+			sourceTree = "<group>";
+		};
+		4144229021E2A13B008795C5 /* MsPacman */ = {
+			isa = PBXGroup;
+			children = (
+				4144229121E2A14C008795C5 /* MsPacman.h */,
+				4144229221E2A15C008795C5 /* MsPacman.m */,
+			);
+			path = MsPacman;
+			sourceTree = "<group>";
+		};
 		41C110D921D444DB00E2C5C0 = {
 			isa = PBXGroup;
 			children = (
@@ -66,6 +174,8 @@
 		41C110E421D444DB00E2C5C0 /* MsPacman-Neat */ = {
 			isa = PBXGroup;
 			children = (
+				4144229021E2A13B008795C5 /* MsPacman */,
+				4144228921E14FF0008795C5 /* Screenshot */,
 				41C110EC21D5877100E2C5C0 /* Keyboard */,
 				41C110E521D444DB00E2C5C0 /* main.m */,
 				41C110F321D5887200E2C5C0 /* Game.h */,
@@ -88,6 +198,11 @@
 		41C110FF21D5A68C00E2C5C0 /* Neat */ = {
 			isa = PBXGroup;
 			children = (
+				4144227421DD7B34008795C5 /* Utilities.h */,
+				4144227221DD7B26008795C5 /* Utilities.m */,
+				4144226E21DD6202008795C5 /* GenomeType */,
+				4144227F21DDA286008795C5 /* PhenomeType */,
+				4144227521DD9901008795C5 /* Populations */,
 			);
 			path = Neat;
 			sourceTree = "<group>";
@@ -148,9 +263,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4144228121DDA2C1008795C5 /* Network.m in Sources */,
+				4144226221DD60F5008795C5 /* GenomeNode.m in Sources */,
+				4144227D21DD9FBB008795C5 /* Organism.m in Sources */,
+				4144228721DDA48C008795C5 /* PhenomeLink.m in Sources */,
+				4144226521DD6158008795C5 /* GenomeLink.m in Sources */,
+				4144229321E2A15C008795C5 /* MsPacman.m in Sources */,
+				4144228C21E1501F008795C5 /* Screenshot.m in Sources */,
+				4144227821DD9A67008795C5 /* Population.m in Sources */,
+				4144227B21DD9F28008795C5 /* Species.m in Sources */,
 				41C110E621D444DB00E2C5C0 /* main.m in Sources */,
+				4144227321DD7B26008795C5 /* Utilities.m in Sources */,
+				4144228521DDA427008795C5 /* PhenomeNode.m in Sources */,
 				41C110F521D5887200E2C5C0 /* Game.m in Sources */,
+				4144227021DD6776008795C5 /* InnovationDb.m in Sources */,
+				4144226821DD617D008795C5 /* Genome.m in Sources */,
 				41C110FA21D58DD600E2C5C0 /* Keyboard.mm in Sources */,
+				4144226C21DD61C5008795C5 /* Innovation.m in Sources */,
+				4144228E21E1542D008795C5 /* WindowListApplierData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
