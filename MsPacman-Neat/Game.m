@@ -34,14 +34,14 @@ static BOOL sigint = NO;
     }
     
     //queue = dispatch_queue_create("gameloop.queue", NULL);
-    signal(SIGINT, SIG_IGN);
-    dispatch_queue_t squeue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
-    sighandler = dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGINT, 0, squeue);
-    dispatch_source_set_event_handler(sighandler, ^{
-        sigint = YES;
-        NSLog(@"Control C hit");
-     });
-    dispatch_resume(sighandler);
+    //signal(SIGINT, SIG_IGN);
+    //dispatch_queue_t squeue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+    //sighandler = dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGINT, 0, squeue);
+    //dispatch_source_set_event_handler(sighandler, ^{
+    //    sigint = YES;
+    //    NSLog(@"Control C hit");
+    // });
+    //dispatch_resume(sighandler);
     
     keyboard = [[Keyboard alloc] init:logLevel];
     screen = [[Screenshot alloc] init:logLevel];
@@ -81,6 +81,8 @@ static BOOL sigint = NO;
             gameScreen = [screen takeScreenshot];
             while (gameOver == NO && sigint == NO) {
                 score = [msPacman getScore:gameScreen];
+                NSLog(@"Current Score: %ld", score);
+                
                 inputs = [msPacman getInputValues:gameScreen];
                 
                 //pass into network
@@ -89,6 +91,8 @@ static BOOL sigint = NO;
                 
                 CGImageRelease(gameScreen);
                 gameScreen = [screen takeScreenshot];
+                
+                NSLog(@"Game Over: %@", ([msPacman isGameOver:gameScreen] == 0 ? @"No" : @"Yes"));
                 if([msPacman isGameOver:gameScreen]) {
                     gameOver = YES;
                     sigint = YES;

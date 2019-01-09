@@ -23,15 +23,114 @@
 }
 
 -(BOOL) isGameOver: (CGImageRef) screenshot {
-    /*
-    size_t width                    = CGImageGetWidth(screenshot);
-    size_t height                   = CGImageGetHeight(screenshot);
-    size_t bitsPerComponent         = CGImageGetBitsPerComponent(screenshot);
-    size_t bitsPerPixel             = CGImageGetBitsPerPixel(screenshot);
-    size_t bytesPerRow              = CGImageGetBytesPerRow(screenshot);
+    size_t width;
+    size_t height;
+    size_t bitsPerComponent;
+    size_t bitmapBytesPerRow;
+    size_t bitmapByteCount;
+    CGRect rect;
+    CGImageRef imageRef;
     
-    NSLog(@"Screenshot: W:%zu, H:%zu, BPC:%zu, BPPixel:%zu, BPRow:%zu", width, height, bitsPerComponent, bitsPerPixel, bytesPerRow);
-    */
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+    
+    int count = 0;
+    int items = 0;
+    int x = 746;
+    
+    while(x >= 466) {
+        rect = CGRectMake(x, 554, 30, 25);
+        imageRef = CGImageCreateWithImageInRect(screenshot, rect);
+        
+        width = CGImageGetWidth(imageRef);
+        height = CGImageGetHeight(imageRef);
+        bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
+        bitmapBytesPerRow = (width * 4);
+        bitmapByteCount = (bitmapBytesPerRow * height);
+        
+        void* bitmapData = malloc( bitmapByteCount );
+        
+        CGContextRef context = CGBitmapContextCreate (bitmapData,
+                                                      width,
+                                                      height,
+                                                      bitsPerComponent,
+                                                      bitmapBytesPerRow,
+                                                      colorSpace,
+                                                      kCGImageAlphaPremultipliedFirst);
+        
+        rect = CGRectMake(0, 0, width, height);
+        CGContextDrawImage(context, rect, imageRef);
+        
+        unsigned char* data = CGBitmapContextGetData (context);
+        BOOL pix1 = (data[(4*((width*8)+7))+1] != 0 && data[(4*((width*8)+7))+2] != 0 && data[(4*((width*8)+7))+3] != 0);
+        BOOL pix2 = (data[(4*((width*8)+14))+1] != 0 && data[(4*((width*8)+14))+2] != 0 && data[(4*((width*8)+14))+3] != 0);
+        BOOL pix3 = (data[(4*((width*8)+22))+1] != 0 && data[(4*((width*8)+22))+2] != 0 && data[(4*((width*8)+22))+3] != 0);
+        BOOL pix4 = (data[(4*((width*16)+7))+1] != 0 && data[(4*((width*16)+7))+2] != 0 && data[(4*((width*16)+7))+3] != 0);
+        BOOL pix5 = (data[(4*((width*16)+14))+1] != 0 && data[(4*((width*16)+14))+2] != 0 && data[(4*((width*16)+14))+3] != 0);
+        BOOL pix6 = (data[(4*((width*16)+22))+1] != 0 && data[(4*((width*16)+22))+2] != 0 && data[(4*((width*16)+22))+3] != 0);
+        
+        if(count == 0) {
+            //R
+            if(pix1 && !pix2 && pix3 && pix4 && pix5 && !pix6) {
+                items++;
+            }
+        } else if (count == 1){
+            //E
+            if(pix1 && !pix2 && !pix3 && pix4 && !pix5 && !pix6) {
+                items++;
+            }
+        } else if (count == 2){
+            //V
+            if(pix1 && !pix2 && pix3 && !pix4 && pix5 && !pix6) {
+                items++;
+            }
+        } else if (count == 3){
+            //O
+            if(pix1 && !pix2 && pix3 && pix4 && !pix5 && pix6) {
+                items++;
+            }
+        } else if (count == 6){
+            //E
+            if(pix1 && !pix2 && !pix3 && pix4 && !pix5 && !pix6) {
+                items++;
+            }
+        } else if (count == 7){
+            //M
+            if(pix1 && pix2 && pix3 && pix4 && !pix5 && pix6) {
+                items++;
+            }
+        } else if (count == 8){
+            //A
+            if(pix1 && !pix2 && pix3 && pix4 && !pix5 && pix6) {
+                items++;
+            }
+        } else if (count == 9){
+            //G
+            if(pix1 && !pix2 && !pix3 && pix4 && !pix5 && pix6) {
+                items++;
+            }
+        }
+        
+        if (data) { free(data); }
+        CGContextRelease(context);
+        CGImageRelease(imageRef);
+        
+        count++;
+        x = x - 30 - 1;
+    }
+    
+    CGColorSpaceRelease(colorSpace);
+    
+    return items >= 5;
+}
+
+-(long) getScore: (CGImageRef) screenshot {
+    size_t width;
+    size_t height;
+    size_t bitsPerComponent;
+    size_t bitmapBytesPerRow;
+    size_t bitmapByteCount;
+    CGRect rect;
+    CGImageRef imageRef;
     
     //Whole score
     /*
@@ -41,81 +140,99 @@
     CGImageRelease(imageRef);
     */
     
-    NSString* filestr = @"";
-    
-    int count = 0;
-    int x = 185+220-30;
-    //while(x >= 185) {
-    CGRect rect1 = CGRectMake(x, 160, 30, 25);
-    CGImageRef imageRef = CGImageCreateWithImageInRect(screenshot, rect1);
-    
-    //------------
-    size_t width = CGImageGetWidth(imageRef);
-    size_t height = CGImageGetHeight(imageRef);
-    size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
-    size_t bitsPerPixel = CGImageGetBitsPerPixel(imageRef);
-    size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
-    
-    size_t bitmapBytesPerRow   = (width * 4);
-    size_t bitmapByteCount     = (bitmapBytesPerRow * height);
-    
-    NSLog(@"Screenshot: W:%zu, H:%zu, BPC:%zu, BPPixel:%zu, BPRow:%zu", width, height, bitsPerComponent, bitsPerPixel, bytesPerRow);
+    NSString* score = @"";
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
     
-    void* bitmapData = malloc( bitmapByteCount );
+    int x = 185+220-30;
     
-    CGContextRef context = CGBitmapContextCreate (bitmapData,
-                                     width,
-                                     height,
-                                     bitsPerComponent,
-                                     bitmapBytesPerRow,
-                                     colorSpace,
-                                     kCGImageAlphaPremultipliedFirst);
+    while(x >= 185) {
+        rect = CGRectMake(x, 160, 30, 25);
+        imageRef = CGImageCreateWithImageInRect(screenshot, rect);
+        
+        width = CGImageGetWidth(imageRef);
+        height = CGImageGetHeight(imageRef);
+        bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
+        bitmapBytesPerRow = (width * 4);
+        bitmapByteCount = (bitmapBytesPerRow * height);
+    
+        void* bitmapData = malloc( bitmapByteCount );
+    
+        CGContextRef context = CGBitmapContextCreate (bitmapData,
+                                                      width,
+                                                      height,
+                                                      bitsPerComponent,
+                                                      bitmapBytesPerRow,
+                                                      colorSpace,
+                                                      kCGImageAlphaPremultipliedFirst);
+    
+        rect = CGRectMake(0, 0, width, height);
+        CGContextDrawImage(context, rect, imageRef);
+    
+        unsigned char* data = CGBitmapContextGetData (context);
+    
+        /*
+        NSLog(@"pix1: [%d,%d,%d]",data[(4*((width*4)+15))+1],data[(4*((width*4)+15))+2],data[(4*((width*4)+15))+3]);
+        NSLog(@"pix2: [%d,%d,%d]",data[(4*((width*8)+7))+1],data[(4*((width*8)+7))+2],data[(4*((width*8)+7))+3]);
+        NSLog(@"pix3: [%d,%d,%d]",data[(4*((width*8)+22))+1],data[(4*((width*8)+22))+2],data[(4*((width*8)+22))+3]);
+        NSLog(@"pix4: [%d,%d,%d]",data[(4*((width*12)+7))+1],data[(4*((width*12)+7))+2],data[(4*((width*12)+7))+3]);
+        NSLog(@"pix5: [%d,%d,%d]",data[(4*((width*12)+15))+1],data[(4*((width*12)+15))+2],data[(4*((width*12)+15))+3]);
+        NSLog(@"pix6: [%d,%d,%d]",data[(4*((width*12)+22))+1],data[(4*((width*12)+22))+2],data[(4*((width*12)+22))+3]);
+        NSLog(@"pix7: [%d,%d,%d]",data[(4*((width*15)+7))+1],data[(4*((width*15)+7))+2],data[(4*((width*15)+7))+3]);
+        NSLog(@"pix8: [%d,%d,%d]",data[(4*((width*15)+22))+1],data[(4*((width*15)+22))+2],data[(4*((width*15)+22))+3]);
+        NSLog(@"pix9: [%d,%d,%d]",data[(4*((width*19)+15))+1],data[(4*((width*19)+15))+2],data[(4*((width*19)+15))+3]);
+        */
+        
+        BOOL pix1 = (data[(4*((width*4)+15))+1] != 0 && data[(4*((width*4)+15))+2] != 0 && data[(4*((width*4)+15))+3] != 0);
+        BOOL pix2 = (data[(4*((width*8)+7))+1] != 0 && data[(4*((width*8)+7))+2] != 0 && data[(4*((width*8)+7))+3] != 0);
+        BOOL pix3 = (data[(4*((width*8)+22))+1] != 0 && data[(4*((width*8)+22))+2] != 0 && data[(4*((width*8)+22))+3] != 0);
+        BOOL pix4 = (data[(4*((width*12)+7))+1] != 0 && data[(4*((width*12)+7))+2] != 0 && data[(4*((width*12)+7))+3] != 0);
+        BOOL pix5 = (data[(4*((width*12)+15))+1] != 0 && data[(4*((width*12)+15))+2] != 0 && data[(4*((width*12)+15))+3] != 0);
+        BOOL pix6 = (data[(4*((width*12)+22))+1] != 0 && data[(4*((width*12)+22))+2] != 0 && data[(4*((width*12)+22))+3] != 0);
+        BOOL pix7 = (data[(4*((width*15)+7))+1] != 0 && data[(4*((width*15)+7))+2] != 0 && data[(4*((width*15)+7))+3] != 0);
+        BOOL pix8 = (data[(4*((width*15)+22))+1] != 0 && data[(4*((width*15)+22))+2] != 0 && data[(4*((width*15)+22))+3] != 0);
+        BOOL pix9 = (data[(4*((width*19)+15))+1] != 0 && data[(4*((width*19)+15))+2] != 0 && data[(4*((width*19)+15))+3] != 0);
+        
+        if (pix1 && pix2 && pix3 && pix4 && !pix5 && pix6 && pix7 && pix8 && pix9) {
+            score = [score stringByAppendingString:[NSString stringWithFormat:@"%i",0]];
+        } else if (pix1 && pix2 && !pix3 && !pix4 && pix5 && !pix6 && !pix7 && !pix8 && pix9) {
+            score = [score stringByAppendingString:[NSString stringWithFormat:@"%i",1]];
+        } else if (pix1 && !pix2 && pix3 && pix4 && pix5 && pix6 && pix7 && !pix8 && pix9) {
+            score = [score stringByAppendingString:[NSString stringWithFormat:@"%i",2]];
+        } else if (pix1 && !pix2 && pix3 && pix4 && pix5 && pix6 && !pix7 && pix8 && pix9) {
+            score = [score stringByAppendingString:[NSString stringWithFormat:@"%i",3]];
+        } else if (!pix1 && pix2 && pix3 && pix4 && pix5 && pix6 && !pix7 && pix8 && !pix9) {
+            score = [score stringByAppendingString:[NSString stringWithFormat:@"%i",4]];
+        } else if (pix1 && pix2 && !pix3 && pix4 && pix5 && pix6 && !pix7 && pix8 && pix9) {
+            score = [score stringByAppendingString:[NSString stringWithFormat:@"%i",5]];
+        } else if (pix1 && pix2 && !pix3 && pix4 && pix5 && pix6 && pix7 && pix8 && pix9) {
+            score = [score stringByAppendingString:[NSString stringWithFormat:@"%i",6]];
+        } else if (pix1 && !pix2 && pix3 && !pix4 && !pix5 && pix6 && !pix7 && pix8 && !pix9) {
+            score = [score stringByAppendingString:[NSString stringWithFormat:@"%i",7]];
+        } else if (pix1 && pix2 && pix3 && pix4 && pix5 && pix6 && pix7 && pix8 && pix9) {
+            score = [score stringByAppendingString:[NSString stringWithFormat:@"%i",8]];
+        } else if (pix1 && pix2 && pix3 && pix4 && pix5 && pix6 && !pix7 && pix8 && !pix9) {
+            score = [score stringByAppendingString:[NSString stringWithFormat:@"%i",9]];
+        }
+        
+        if (data) { free(data); }
+        CGContextRelease(context);
+        CGImageRelease(imageRef);
+        
+        x = x - 30 - 1;
+    }
     
     CGColorSpaceRelease(colorSpace);
     
-    rect1 = CGRectMake(0, 0, width, height);
-    CGContextDrawImage(context, rect1, imageRef);
-    
-    unsigned char* data = CGBitmapContextGetData (context);
-    
-    for(int row = 0; row < height; row++) {
-        for(int x = 0; x < width; x++) {
-            
-            int offset = 4 * ((width * row) + round(x));
-            //int alpha = data[offset];
-            int red   = data[offset + 1];
-            int green = data[offset + 2];
-            int blue  = data[offset + 3];
-            
-            NSLog(@"XY: [%i,%i], RGB: [%d][%d][%d]",x,row,red,green,blue);
-            
-            NSString* str = @"";
-            if(row == 0 && x == 0) {
-                str = [NSString stringWithFormat:@"%d,%d,%d", red, green, blue];
-            } else {
-                str = [NSString stringWithFormat:@",%d,%d,%d", red, green, blue];
-            }
-            filestr = [filestr stringByAppendingString:str];
-        }
+    NSMutableString *reversedString = [NSMutableString string];
+    NSInteger charIndex = [score length];
+    while (score && charIndex > 0) {
+        charIndex--;
+        NSRange subStrRange = NSMakeRange(charIndex, 1);
+        [reversedString appendString:[score substringWithRange:subStrRange]];
     }
-    if (data) { free(data); }
-    CGContextRelease(context);
-    //-------------
-
-        
-        [self saveScreenshot:imageRef number:count];
-        CGImageRelease(imageRef);
-        
-        count++;
-        x = x - 30 - 1;
-    //}
     
-    [[NSFileManager defaultManager] createFileAtPath:@"/Users/murphycrosby/Documents/Misc/Images/img.txt" contents:nil attributes:nil];
-    [filestr writeToFile:@"/Users/murphycrosby/Documents/Misc/Images/img.txt" atomically:YES encoding:NSUTF8StringEncoding error:nil];
-    
-    return YES;
+    return [reversedString longLongValue];
 }
 
 -(void) saveScreenshot: (CGImageRef) screenshot number: (int) num {
@@ -138,9 +255,33 @@
     CFRelease(destination);
 }
 
--(long) getScore: (CGImageRef) screenshot {
+-(void) saveScreenshotToArray: (unsigned char*) data width:(size_t) width height:(size_t) height filename:(NSString*) filename {
+    NSString* dataArray = @"";
     
-    return 42;
+    for(int row = 0; row < height; row++) {
+        for(int x = 0; x < width; x++) {
+            int offset = 4 * ((width * row) + round(x));
+            //int alpha = data[offset];
+            int red   = data[offset + 1];
+            int green = data[offset + 2];
+            int blue  = data[offset + 3];
+            
+            //NSLog(@"XY: [%i,%i], RGB: [%d][%d][%d]",x,row,red,green,blue);
+            NSString* str;
+            if(row == 0 && x == 0) {
+                str = [NSString stringWithFormat:@"%d,%d,%d", red, green, blue];
+            } else {
+                str = [NSString stringWithFormat:@",%d,%d,%d", red, green, blue];
+            }
+            dataArray = [dataArray stringByAppendingString:str];
+        }
+    }
+    
+    NSString* path = @"/Users/murphycrosby/Documents/Misc/Images/";
+    path = [path stringByAppendingString:filename];
+    
+    [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
+    [dataArray writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:nil];
 }
 
 -(NSMutableArray*) getInputValues: (CGImageRef) screenshot {
