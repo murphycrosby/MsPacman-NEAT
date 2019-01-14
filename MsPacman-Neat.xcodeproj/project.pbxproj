@@ -22,6 +22,7 @@
 		4144228C21E1501F008795C5 /* Screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144228B21E1501F008795C5 /* Screenshot.m */; };
 		4144228E21E1542D008795C5 /* WindowListApplierData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144228D21E1542D008795C5 /* WindowListApplierData.m */; };
 		4144229321E2A15C008795C5 /* MsPacman.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144229221E2A15C008795C5 /* MsPacman.m */; };
+		419F41B521EAD023005A4377 /* Level1.m in Sources */ = {isa = PBXBuildFile; fileRef = 419F41B421EAD023005A4377 /* Level1.m */; };
 		41C110E621D444DB00E2C5C0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 41C110E521D444DB00E2C5C0 /* main.m */; };
 		41C110F521D5887200E2C5C0 /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = 41C110F421D5887200E2C5C0 /* Game.m */; };
 		41C110FA21D58DD600E2C5C0 /* Keyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41C110F921D58DD600E2C5C0 /* Keyboard.mm */; };
@@ -70,6 +71,8 @@
 		4144228F21E15453008795C5 /* WindowListApplierData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowListApplierData.h; sourceTree = "<group>"; };
 		4144229121E2A14C008795C5 /* MsPacman.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MsPacman.h; sourceTree = "<group>"; };
 		4144229221E2A15C008795C5 /* MsPacman.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MsPacman.m; sourceTree = "<group>"; };
+		419F41B421EAD023005A4377 /* Level1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Level1.m; sourceTree = "<group>"; };
+		419F41B621EAD036005A4377 /* Level1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Level1.h; sourceTree = "<group>"; };
 		41C110E221D444DB00E2C5C0 /* MsPacman-Neat */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "MsPacman-Neat"; sourceTree = BUILT_PRODUCTS_DIR; };
 		41C110E521D444DB00E2C5C0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		41C110F321D5887200E2C5C0 /* Game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
@@ -148,6 +151,8 @@
 		4144229021E2A13B008795C5 /* MsPacman */ = {
 			isa = PBXGroup;
 			children = (
+				419F41B621EAD036005A4377 /* Level1.h */,
+				419F41B421EAD023005A4377 /* Level1.m */,
 				4144229121E2A14C008795C5 /* MsPacman.h */,
 				4144229221E2A15C008795C5 /* MsPacman.m */,
 			);
@@ -275,6 +280,7 @@
 				41C110E621D444DB00E2C5C0 /* main.m in Sources */,
 				4144227321DD7B26008795C5 /* Utilities.m in Sources */,
 				4144228521DDA427008795C5 /* PhenomeNode.m in Sources */,
+				419F41B521EAD023005A4377 /* Level1.m in Sources */,
 				41C110F521D5887200E2C5C0 /* Game.m in Sources */,
 				4144227021DD6776008795C5 /* InnovationDb.m in Sources */,
 				4144226821DD617D008795C5 /* Genome.m in Sources */,
@@ -401,18 +407,22 @@
 		41C110EA21D444DB00E2C5C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = V4464TVV3N;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
 		41C110EB21D444DB00E2C5C0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = V4464TVV3N;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
