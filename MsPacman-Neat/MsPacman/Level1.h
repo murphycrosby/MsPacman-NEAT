@@ -10,10 +10,13 @@
 #define Level1_h
 
 @interface Level1 : NSObject {
+    int logLevel;
     NSMutableDictionary* level1Rects;
+    NSMutableArray* level1Pellets;
 }
 
 @property (nonatomic) NSMutableDictionary* level1Rects;
+@property (nonatomic) NSMutableArray* level1Pellets;
 
 -(id)init: (int) logLvl;
 

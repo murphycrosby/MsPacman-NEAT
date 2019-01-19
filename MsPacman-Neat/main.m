@@ -9,23 +9,25 @@
 #import <Foundation/Foundation.h>
 #import "Game.h"
 
+Game* g;
+
+void controlc_handler(int s){
+    printf("Caught signal %d\n",s);
+    g = nil;
+    exit(1);
+}
+
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         NSLog(@"Hello, World!");
         
-        __block Game* g;
+        struct sigaction sigIntHandler;
+        sigIntHandler.sa_handler = controlc_handler;
+        sigemptyset(&sigIntHandler.sa_mask);
+        sigIntHandler.sa_flags = 0;
+        sigaction(SIGINT, &sigIntHandler, NULL);
         
-        signal(SIGINT, SIG_IGN);
-        dispatch_queue_t squeue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
-        dispatch_source_t sighandler = dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGINT, 0, squeue);
-        dispatch_source_set_event_handler(sighandler, ^{
-            //sigint = YES;
-            g = nil;
-            NSLog(@"Control C hit");
-        });
-        dispatch_resume(sighandler);
-        
-        g = [[Game alloc] init:3];
+        g = [[Game alloc] init:1];
         if(g) {
             [g playEvolve: 1];
         }

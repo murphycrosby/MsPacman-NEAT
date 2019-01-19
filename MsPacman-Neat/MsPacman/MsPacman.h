@@ -13,19 +13,19 @@
 
 @interface MsPacman : NSObject {
     int logLevel;
-    //NSMutableDictionary* lvl1Rects;
     Level1* lvl1;
-    CGRect mspacman;
-    CGRect inky;
-    CGRect blinky;
-    CGRect pinky;
-    CGRect sue;
+    
+    NSMutableArray* msPacmanHistory;
+    NSMutableArray* blinkyHistory;
+    NSMutableArray* pinkyHistory;
+    NSMutableArray* inkyHistory;
+    NSMutableArray* sueHistory;
+    NSMutableArray* scaredGhostHistory;
+    
 }
 
-@property (nonatomic) int logLevel;
-
 -(id)init: (int) logLvl;
--(void) saveScreenshot: (CGImageRef) screenshot filename: (NSString*) filename number: (int) num;
+-(void) saveScreenshot: (CGImageRef) screenshot filename: (NSString*) filename number: (NSString*) num;
 -(BOOL) isGameOver: (CGImageRef) screenshot;
 -(long) getScore: (CGImageRef) screenshot;
 -(NSMutableArray*) getInputValues: (CGImageRef) screenshot;

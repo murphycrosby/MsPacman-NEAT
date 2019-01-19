@@ -15,13 +15,11 @@
 
 @implementation Game
 
-static BOOL sigint = NO;
-
 @synthesize logLevel;
 @synthesize keyboard;
 @synthesize screen;
 @synthesize msPacman;
-@synthesize sighandler;
+//@synthesize sighandler;
 
 - (id) init: (int) logLvl
 {
@@ -45,7 +43,7 @@ static BOOL sigint = NO;
     
     keyboard = [[Keyboard alloc] init:logLevel];
     screen = [[Screenshot alloc] init:logLevel];
-    msPacman = [[MsPacman alloc] init:logLevel];
+    msPacman = [[MsPacman alloc] init:3];
     
     return self;
 }
@@ -65,7 +63,9 @@ static BOOL sigint = NO;
     Genome* genome = [Genome createGenome:5 outputs:4];
     Population* pop = [Population spawnInitialGenerationFromGenome:1 genome: genome];
     
-    NSLog(@"Game :: playEvolve :: Starting Game");
+    if(logLevel >= 3) {
+        NSLog(@"Game :: playEvolve :: Starting Game");
+    }
     //[keyboard sendKey:kHIDUsage_KeyboardA];
     
     //for (int i = 0; i < generations; i++) {
@@ -79,47 +79,41 @@ static BOOL sigint = NO;
             score = 0;
             gameOver = NO;
             gameScreen = [screen takeScreenshot];
-            //while (gameOver == NO && sigint == NO) {
+            //while (gameOver == NO) {
+            //for(int i = 0; i < 10; i++) {
                 score = [msPacman getScore:gameScreen];
-                NSLog(@"Current Score: %ld", score);
+                if(logLevel >= 3) {
+                    NSLog(@"Current Score: %ld", score);
+                }
     
+                NSDate *methodStart;
+                NSDate *methodFinish;
+                if(logLevel >= 4) {
+                    methodStart = [NSDate date];
+                }
                 inputs = [msPacman getInputValues:gameScreen];
+                if(logLevel >= 4) {
+                    methodFinish = [NSDate date];
+                    NSTimeInterval executionTime = [methodFinish timeIntervalSinceDate:methodStart];
+                    NSLog(@"executionTime = %f", executionTime);
+                }
+                //if(logLevel >= 3) {
+                for(int i = 0; i < [inputs count]; i++) {
+                    NSLog(@"%d: %d",i,[[inputs objectAtIndex:i] intValue]);
+                }
+                //}
     
-    //704.000000,510.000000,717.000000,515.000000 w:13.000000 h:5.000000
-    //CGRect rect1 = CGRectMake(704, 510, 13, 5);
-    //697.000000,515.000000,709.000000,516.000000 w:12.000000 h:1.000000
-    //CGRect rect2 = CGRectMake(697, 515, 12, 1);
-    //CGRect g = CGRectUnion(rect1, rect2);
-    //NSLog(@"%f,%f,%f,%f",g.origin.x, g.origin.y, g.size.width, g.size.height);
-    //697.000000,510.000000,20.000000,6.000000
-    
-    /*----------
-    NSMutableArray* array = [[NSMutableArray alloc] init];
-    CGRect rect = CGRectMake(0, 0, 0, 0);
-    NSLog(@"%f,%f,%f,%f",rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-    [array addObject:[NSValue valueWithRect:rect]];
-    for(int i = 0; i < [array count]; i++){
-        CGRect g = [[array objectAtIndex:i] rectValue];
-        g.size.width = 10;
-        [array replaceObjectAtIndex:i withObject:[NSValue valueWithRect:g]];
-    }
-    for(int i = 0; i < [array count]; i++){
-        CGRect g = [[array objectAtIndex:i] rectValue];
-        NSLog(@"%f,%f,%f,%f",g.origin.x, g.origin.y, g.size.width, g.size.height);
-    }
-    ----------*/
                 //pass into network
                 
                 //[NSThread sleepForTimeInterval:1.0f];
                 
                 CGImageRelease(gameScreen);
                 gameScreen = [screen takeScreenshot];
-                
-                NSLog(@"Game Over: %@", ([msPacman isGameOver:gameScreen] == 0 ? @"No" : @"Yes"));
-                if([msPacman isGameOver:gameScreen]) {
-                    gameOver = YES;
-                    sigint = YES;
+    
+                if(logLevel >= 3) {
+                    NSLog(@"Game Over: %@", ([msPacman isGameOver:gameScreen] == 0 ? @"No" : @"Yes"));
                 }
+                gameOver = [msPacman isGameOver:gameScreen];
             //}
             CGImageRelease(gameScreen);
             
@@ -147,6 +141,21 @@ static BOOL sigint = NO;
     //write out best network weights and everything
     
     NSLog(@"Game :: playEvolve :: Complete");
+}
+
+- (void) rectTest:(CGRect*) blah {
+    if(CGRectIsEmpty(*blah)) {
+        NSLog(@"CGRect is empty");
+        *blah = CGRectMake(10, 10, 10, 10);
+    } else {
+        NSLog(@"CGRect is not empty");
+        blah->origin.x += 10;
+        blah->origin.y += 10;
+        blah->size.width += 10;
+        blah->size.height += 10;
+    }
+    
+    return;
 }
 
 - (void) playBest {

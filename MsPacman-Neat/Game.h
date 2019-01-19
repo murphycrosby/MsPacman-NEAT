@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,retain) Keyboard* keyboard;
 @property (nonatomic,retain) Screenshot* screen;
 @property (nonatomic,retain) MsPacman* msPacman;
-@property (nonatomic,strong) dispatch_source_t sighandler;
+//@property (nonatomic,strong) dispatch_source_t sighandler;
 @property (nonatomic,readwrite) int logLevel;
 
 - (id)init: (int)logLvl;
