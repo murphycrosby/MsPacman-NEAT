@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4110861321F56ABD0059C81F /* Parameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 4110861221F56ABD0059C81F /* Parameters.m */; };
 		4144226221DD60F5008795C5 /* GenomeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144226121DD60F5008795C5 /* GenomeNode.m */; };
 		4144226521DD6158008795C5 /* GenomeLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144226421DD6158008795C5 /* GenomeLink.m */; };
 		4144226821DD617D008795C5 /* Genome.m in Sources */ = {isa = PBXBuildFile; fileRef = 4144226721DD617D008795C5 /* Genome.m */; };
@@ -41,6 +42,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4110861121F56A940059C81F /* Parameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parameters.h; sourceTree = "<group>"; };
+		4110861221F56ABD0059C81F /* Parameters.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Parameters.m; sourceTree = "<group>"; };
 		4144226121DD60F5008795C5 /* GenomeNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GenomeNode.m; sourceTree = "<group>"; };
 		4144226321DD612C008795C5 /* GenomeNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenomeNode.h; sourceTree = "<group>"; };
 		4144226421DD6158008795C5 /* GenomeLink.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GenomeLink.m; sourceTree = "<group>"; };
@@ -194,8 +197,8 @@
 			children = (
 				41C110FC21D58E8D00E2C5C0 /* karabiner_virtual_hid_device_methods.hpp */,
 				41C110FD21D58E8D00E2C5C0 /* karabiner_virtual_hid_device.hpp */,
-				41C110F921D58DD600E2C5C0 /* Keyboard.mm */,
 				41C110FB21D58DE600E2C5C0 /* Keyboard.h */,
+				41C110F921D58DD600E2C5C0 /* Keyboard.mm */,
 			);
 			path = Keyboard;
 			sourceTree = "<group>";
@@ -203,6 +206,8 @@
 		41C110FF21D5A68C00E2C5C0 /* Neat */ = {
 			isa = PBXGroup;
 			children = (
+				4110861121F56A940059C81F /* Parameters.h */,
+				4110861221F56ABD0059C81F /* Parameters.m */,
 				4144227421DD7B34008795C5 /* Utilities.h */,
 				4144227221DD7B26008795C5 /* Utilities.m */,
 				4144226E21DD6202008795C5 /* GenomeType */,
@@ -283,6 +288,7 @@
 				419F41B521EAD023005A4377 /* Level1.m in Sources */,
 				41C110F521D5887200E2C5C0 /* Game.m in Sources */,
 				4144227021DD6776008795C5 /* InnovationDb.m in Sources */,
+				4110861321F56ABD0059C81F /* Parameters.m in Sources */,
 				4144226821DD617D008795C5 /* Genome.m in Sources */,
 				41C110FA21D58DD600E2C5C0 /* Keyboard.mm in Sources */,
 				4144226C21DD61C5008795C5 /* Innovation.m in Sources */,

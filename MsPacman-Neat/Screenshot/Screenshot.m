@@ -27,9 +27,9 @@
     
     CGWindowListOption listOptions = kCGWindowListOptionAll | kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements;
     CFArrayRef windowList = CGWindowListCopyWindowInfo(listOptions, kCGNullWindowID);
-    NSMutableArray* prunedWindowList = [NSMutableArray array];
+    NSMutableArray* prunedWindowList = [[NSMutableArray alloc] init];
     WindowListApplierData* windowListData = [[WindowListApplierData alloc] initWindowListData:prunedWindowList];
-    CFArrayApplyFunction(windowList, CFRangeMake(0, CFArrayGetCount(windowList)), &WindowListApplierFunction, (__bridge void *)(windowListData));
+    CFArrayApplyFunction(windowList, CFRangeMake(0, CFArrayGetCount(windowList)), &WindowListApplierFunction, (__bridge void*)(windowListData));
     CFRelease(windowList);
     
     NSString *path = @"/Users/murphycrosby/Misc/Images/";
@@ -64,10 +64,14 @@
         NSInteger b = [input integerValue];
         window = windowListData.outputArray[b];
     } else if (windowListData.outputArray.count > 1) {
-        NSLog(@"Screenshot :: init :: Window: 1");
+        if(logLevel >= 3) {
+            NSLog(@"Screenshot :: init :: Window: 1");
+        }
         window = windowListData.outputArray[1];
     } else {
-        NSLog(@"Screenshot :: init :: Window: 0");
+        if(logLevel >= 3) {
+            NSLog(@"Screenshot :: init :: Window: 0");
+        }
         window = windowListData.outputArray[0];
     }
     windowID = [window[kWindowIDKey] unsignedIntValue];
@@ -87,7 +91,7 @@
 }
 
 - (void)dealloc {
-    if(logLevel >= 3) {
+    if(logLevel >= 1) {
         NSLog(@"Screenshot :: dealloc :: Complete\n");
     }
 }

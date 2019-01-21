@@ -9,8 +9,10 @@
 #import "Game.h"
 #import <IOKit/hid/IOHIDValue.h>
 #import "Utilities.h"
+#import "Parameters.h"
 #import "Population.h"
 #import "Organism.h"
+#import "Network.h"
 #import "Genome.h"
 
 @implementation Game
@@ -41,15 +43,22 @@
     // });
     //dispatch_resume(sighandler);
     
-    keyboard = [[Keyboard alloc] init:logLevel];
-    screen = [[Screenshot alloc] init:logLevel];
-    msPacman = [[MsPacman alloc] init:3];
+    //keyboard = [[Keyboard alloc] init:1];
+    //screen = [[Screenshot alloc] init:1];
+    msPacman = [[MsPacman alloc] init:1];
+    
+    int seed = 0;
+    if (seed == 0) {
+        srand((unsigned int)time(NULL));
+    }
+    else {
+        srand(seed);
+    }
     
     return self;
 }
 
-- (void) playEvolve:(int) generations
-{
+- (void) playEvolve {
     CGImageRef gameScreen;
     long score = 0;
     NSMutableArray* inputs;
@@ -60,26 +69,43 @@
         NSLog(@"Game :: playEvolve :: start");
     }
     
-    Genome* genome = [Genome createGenome:5 outputs:4];
-    Population* pop = [Population spawnInitialGenerationFromGenome:1 genome: genome];
+    Genome* genome = [Genome createGenome:3 outputs:4];
+    Population* population = [Population spawnInitialGenerationFromGenome:genome];
     
     if(logLevel >= 3) {
         NSLog(@"Game :: playEvolve :: Starting Game");
     }
+    
+    [population saveOganisms:@"filename"];
     //[keyboard sendKey:kHIDUsage_KeyboardA];
     
-    //for (int i = 0; i < generations; i++) {
-        //for (Organism* nextOrganism in pop.allOrganisms) {
-            //[nextOrganism developNetwork];
+    for (int i = 0; i < [Parameters numGenerations]; i++) {
+        for (Organism* nextOrganism in population.allOrganisms) {
+            [nextOrganism developNetwork];
             
-            /*
-            dispatch_async(queue, ^{
-            });
-            */
+            NSMutableArray* arr = [[NSMutableArray alloc] init];
+            [arr addObject:[NSNumber numberWithInt:42]];
+            [arr addObject:[NSNumber numberWithInt:17]];
+            [arr addObject:[NSNumber numberWithInt:69]];
+            NSArray* output = [nextOrganism predict:arr];
+            if([output count] == 4) {
+                NSLog(@"Network Output: [%1.3f] [%1.3f] [%1.3f] [%1.3f]", [output[0] doubleValue], [output[1] doubleValue], [output[2] doubleValue], [output[3] doubleValue]);
+            }
+            [nextOrganism.network flushNetwork];
+            nextOrganism.fitness = 5;
+            [nextOrganism destroyNetwork];
+        }
+        [population evolvePopulation];
+    }
+    //[pop ev]
+    /*
+     
+            //dispatch_async(queue, ^{
+            //});
             score = 0;
             gameOver = NO;
             gameScreen = [screen takeScreenshot];
-            //while (gameOver == NO) {
+            while (gameOver == NO) {
             //for(int i = 0; i < 10; i++) {
                 score = [msPacman getScore:gameScreen];
                 if(logLevel >= 3) {
@@ -97,11 +123,18 @@
                     NSTimeInterval executionTime = [methodFinish timeIntervalSinceDate:methodStart];
                     NSLog(@"executionTime = %f", executionTime);
                 }
-                //if(logLevel >= 3) {
-                for(int i = 0; i < [inputs count]; i++) {
-                    NSLog(@"%d: %d",i,[[inputs objectAtIndex:i] intValue]);
+                if(logLevel >= 3) {
+                    CGRect msPacmanRect = [msPacman msPacman];
+                    NSLog(@"MsPacman: %d,%d,%d,%d", (int)msPacmanRect.origin.x, (int)msPacmanRect.origin.y, (int)msPacmanRect.size.width, (int)msPacmanRect.size.height);
+                    CGRect blinkyRect = [msPacman blinky];
+                    NSLog(@"  Blinky: %d,%d,%d,%d", (int)blinkyRect.origin.x, (int)blinkyRect.origin.y, (int)blinkyRect.size.width, (int)blinkyRect.size.height);
+                    CGRect pinkyRect = [msPacman pinky];
+                    NSLog(@"   Pinky: %d,%d,%d,%d", (int)pinkyRect.origin.x, (int)pinkyRect.origin.y, (int)pinkyRect.size.width, (int)pinkyRect.size.height);
+                    CGRect inkyRect = [msPacman inky];
+                    NSLog(@"    Inky: %d,%d,%d,%d", (int)inkyRect.origin.x, (int)inkyRect.origin.y, (int)inkyRect.size.width, (int)inkyRect.size.height);
+                    CGRect sueRect = [msPacman sue];
+                    NSLog(@"     Sue: %d,%d,%d,%d", (int)sueRect.origin.x, (int)sueRect.origin.y, (int)sueRect.size.width, (int)sueRect.size.height);
                 }
-                //}
     
                 //pass into network
                 
@@ -114,7 +147,10 @@
                     NSLog(@"Game Over: %@", ([msPacman isGameOver:gameScreen] == 0 ? @"No" : @"Yes"));
                 }
                 gameOver = [msPacman isGameOver:gameScreen];
-            //}
+                if(logLevel >= 3) {
+                    NSLog(@" ");
+                }
+            }
             CGImageRelease(gameScreen);
             
             //if(sigint == YES) {
@@ -136,6 +172,7 @@
         //}
         
         //evolve
+     */
     //}
     
     //write out best network weights and everything
@@ -166,7 +203,7 @@
     keyboard = nil;
     screen = nil;
     
-    if(logLevel >= 3) {
+    if(logLevel >= 1) {
         NSLog(@"Game :: dealloc :: Complete\n");
     }
 }

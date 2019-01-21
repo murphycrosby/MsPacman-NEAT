@@ -17,7 +17,7 @@
     return nodeID;
 }
 
--(NSComparisonResult) compareIDWith: (GenomeNode *) anotherNode {
+-(NSComparisonResult) compareIDWith: (GenomeNode*) anotherNode {
     if (self.nodeID < anotherNode.nodeID) {
         return NSOrderedDescending;
     }
@@ -27,37 +27,42 @@
     return NSOrderedAscending;
 }
 
--(NSString *) description {
+-(NSString*) description {
     
-    NSString * nodePositionString;
-    switch (nodeType) {
-        case HIDDEN:
-            nodePositionString = @"Hidden";
-            break;
-        case INPUT:
-            nodePositionString = @"Input";
-            break;
-        case OUTPUT:
-            nodePositionString = @"Output";
-            break;
-        case BIAS:
-            nodePositionString = @"Bias";
-            break;
-        default:
-            nodePositionString = @"Unknown"; // error
-            break;
-    }
+    NSString* nodePositionString = [GenomeNode NodeTypeString:nodeType];
     
     return [NSString stringWithFormat:@"%@ Node %i at (%1.1f, %1.1f)",
             nodePositionString, nodeID, nodePosition.x, nodePosition.y];
 }
 
--(GenomeNode *) copyWithZone: (NSZone *) zone {
-    GenomeNode * copiedGenoNode = [[GenomeNode alloc] init];
+-(GenomeNode*) copyWithZone: (NSZone*) zone {
+    GenomeNode* copiedGenoNode = [[GenomeNode alloc] init];
     copiedGenoNode.nodeID = nodeID;
     copiedGenoNode.nodeType = nodeType;
     copiedGenoNode.nodePosition = nodePosition;
     return copiedGenoNode;
+}
+
++(NSString*) NodeTypeString: (NodeType) nodeType {
+    NSString* ntString;
+    switch (nodeType) {
+        case HIDDEN:
+            ntString = @"HIDDEN";
+            break;
+        case INPUT:
+            ntString = @"INPUT";
+            break;
+        case OUTPUT:
+            ntString = @"OUTPUT";
+            break;
+        case BIAS:
+            ntString = @"BIAS";
+            break;
+        default:
+            ntString = @"UNKNOWN"; // error
+            break;
+    }
+    return ntString;
 }
 
 @end

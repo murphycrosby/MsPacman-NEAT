@@ -18,13 +18,13 @@
 @implementation Network
 @synthesize genome, numLinks, numNodes, allNodes, inputNodes, outputNodes;
 
--(NSString *) description {
+-(NSString*) description {
     return [NSString stringWithFormat: @"Nodes: %@ Links: %@",
             [allNodes description],
             [allLinks description]];
 }
 
-- (id)initWithGenome:(Genome *) genotype
+- (id)initWithGenome:(Genome*) genotype
 {
     self = [super init];
     if (self) {
@@ -38,8 +38,8 @@
         numNodes = 0;
         
         // set up phenonodes
-        for (GenomeNode * nextGenoNode in genome.genoNodes) {
-            PhenomeNode * newPhenoNode = [[PhenomeNode alloc] init];
+        for (GenomeNode* nextGenoNode in genome.genoNodes) {
+            PhenomeNode* newPhenoNode = [[PhenomeNode alloc] init];
             newPhenoNode.nodeID = nextGenoNode.nodeID;
             newPhenoNode.nodeType = nextGenoNode.nodeType;
             
@@ -55,11 +55,11 @@
         }
         
         // set up phenolinks
-        for (GenomeLink * nextGenoLink in genome.genoLinks) {
+        for (GenomeLink* nextGenoLink in genome.genoLinks) {
             if (nextGenoLink.isEnabled) {
-                ONPhenoLink * newPhenoLink = [[ONPhenoLink alloc] init];
+                PhenoLink* newPhenoLink = [[PhenoLink alloc] init];
                 
-                PhenomeNode * fNode = [self getNodeWithID:nextGenoLink.fromNode];
+                PhenomeNode* fNode = [self getNodeWithID:nextGenoLink.fromNode];
                 if (fNode == nil) {
                     NSLog(@"Warning - In building Phenotype: PhenoNode %d referred to by a genoLink cannot be found",
                           nextGenoLink.fromNode);
@@ -67,7 +67,7 @@
                 newPhenoLink.fromNode = fNode;
                 [newPhenoLink.fromNode.outgoingPhenoLinks addObject:newPhenoLink];
                 
-                PhenomeNode * tNode = [self getNodeWithID:nextGenoLink.toNode];
+                PhenomeNode* tNode = [self getNodeWithID:nextGenoLink.toNode];
                 if (tNode == nil) {
                     NSLog(@"Warning - In building Phenotype: PhenoNode %d referred to by a genoLink cannot be found",
                           nextGenoLink.toNode);
@@ -87,19 +87,19 @@
     return self;
 }
 
--(PhenomeNode *) getNodeWithID: (int) nID {
-    for (PhenomeNode * nextPhenoNode in allNodes) {
+-(PhenomeNode*) getNodeWithID: (int) nID {
+    for (PhenomeNode* nextPhenoNode in allNodes) {
         if (nextPhenoNode.nodeID == nID) {
             return nextPhenoNode;
         }
     }
     return nil;
 }
-/*
--(void) updateSensors: (NSArray *) inputValuesArray {
+
+-(void) updateSensors: (NSArray*) inputValuesArray {
     for (int i = 0; i < [inputNodes count]; i++) {
-        PhenomeNode * nextInputNode = [inputNodes objectAtIndex:i];
-        NSNumber * nextInputValue = [inputValuesArray objectAtIndex:i];
+        PhenomeNode* nextInputNode = [inputNodes objectAtIndex:i];
+        NSNumber* nextInputValue = [inputValuesArray objectAtIndex:i];
         if (nextInputValue != nil) {
             nextInputNode.activationValue = [nextInputValue doubleValue];
         }
@@ -112,42 +112,50 @@
         NSLog(@"Runtime Warning - there are %lu input values but only %lu input sensors in the network: ignoring the extra ones",
               [inputValuesArray count], [inputNodes count]);
     }
-    for (PhenomeNode * nextPhenoNode in allNodes) {
+    for (PhenomeNode* nextPhenoNode in allNodes) {
         if (nextPhenoNode.nodeType == BIAS) {
             nextPhenoNode.activationValue = 1.0;
         }
     }
 }
 
--(void) activateNetwork {
-    
-    bool stabilised = false;
-    int remainingLoops = [ONParameterController maxNeuralNetworkLoops];
-    
-    while (!stabilised && remainingLoops > 0) {
-        stabilised = true;
-        // run forward through each node
-        for (PhenomeNode * nextPhenoNode in allNodes) {
-            if (nextPhenoNode.nodeType == HIDDEN ||
-                nextPhenoNode.nodeType == OUTPUT) {
-                [nextPhenoNode activate];
-                if (nextPhenoNode.hasChangedSinceLastTraversal) {
-                    stabilised = false;
-                }
-            }
+-(NSArray*) activateNetwork {
+    for (PhenomeNode* nextPhenoNode in allNodes) {
+        if (nextPhenoNode.nodeType == INPUT) {
+            //We need to process in order starting from the input layer
+            [nextPhenoNode activate];
         }
-        remainingLoops--;
-        
     }
-    
+    return [Network fsoftmax: allNodes];
 }
 
 -(void) flushNetwork {
-    for (PhenomeNode * nextPhenoNode in allNodes) {
+    for (PhenomeNode* nextPhenoNode in allNodes) {
         nextPhenoNode.activationValue = 0;
-        nextPhenoNode.lastActivationValue = 0;
+        //nextPhenoNode.lastActivationValue = 0;
+        nextPhenoNode.activated = FALSE;
     }
 }
-*/
+
++(NSArray*) fsoftmax: (NSArray*) nodes {
+    NSMutableArray* outputArray = [[NSMutableArray alloc] init];
+    double sum = 0.0;
+    for (PhenomeNode* nextPhenoNode in nodes) {
+        if(nextPhenoNode.nodeType == OUTPUT) {
+            double exp = expf(nextPhenoNode.activationValue);
+            sum += exp;
+        }
+    }
+    
+    for (PhenomeNode* nextPhenoNode in nodes) {
+        if(nextPhenoNode.nodeType == OUTPUT) {
+            double val = expf(nextPhenoNode.activationValue) / sum;
+            nextPhenoNode.activationValue = val;
+            [outputArray addObject:@(val)];
+        }
+    }
+    
+    return outputArray;
+}
 
 @end

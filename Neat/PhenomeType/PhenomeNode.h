@@ -13,24 +13,25 @@
 #import "GenomeNode.h"
 
 @interface PhenomeNode : NSObject {
-    int nodeID;
-    NodeType nodeType;
+    //int nodeID;
+    //NodeType nodeType;
     
-    NSMutableArray * incomingPhenoLinks;
-    NSMutableArray * outgoingPhenoLinks;
+    //NSMutableArray* incomingPhenoLinks;
+    //NSMutableArray* outgoingPhenoLinks;
     
-    double activationValue;
-    double lastActivationValue;
-    bool hasChangedSinceLastTraversal;
+    //double activationValue;
+    //double lastActivationValue;
+    //bool hasChangedSinceLastTraversal;
 }
 
 @property int nodeID;
 @property NodeType nodeType;
-@property (retain) NSMutableArray * incomingPhenoLinks;
-@property (retain) NSMutableArray * outgoingPhenoLinks;
+@property (retain) NSMutableArray* incomingPhenoLinks;
+@property (retain) NSMutableArray* outgoingPhenoLinks;
 @property double activationValue;
-@property double lastActivationValue;
-@property bool hasChangedSinceLastTraversal;
+//@property double lastActivationValue;
+@property BOOL activated;
+//@property bool hasChangedSinceLastTraversal;
 
 -(void) activate;
 -(void) clearLinks;

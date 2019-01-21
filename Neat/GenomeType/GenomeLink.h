@@ -12,11 +12,11 @@
 #import "Innovation.h"
 
 @interface GenomeLink : NSObject <InnovationInformationProtocol>{
-    int linkID;
-    int fromNode;
-    int toNode;
-    double weight;
-    bool isEnabled;
+    //int linkID;
+    //int fromNode;
+    //int toNode;
+    //double weight;
+    //bool isEnabled;
 }
 
 @property int linkID;

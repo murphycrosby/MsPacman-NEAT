@@ -104,7 +104,7 @@
     if (service) {
         IOObjectRelease(service);
     }
-    if(logLevel >= 3) {
+    if(logLevel >= 1) {
         NSLog(@"Keyboard :: dealloc :: Complete\n");
     }
 }

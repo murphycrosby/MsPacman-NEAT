@@ -11,15 +11,15 @@
 
 @class PhenomeNode;
 
-@interface ONPhenoLink : NSObject {
-    PhenomeNode * fromNode;
-    PhenomeNode * toNode;
-    double weight;
-    bool isEnabled;
+@interface PhenoLink : NSObject {
+    //PhenomeNode* fromNode;
+    //PhenomeNode* toNode;
+    //double weight;
+    //bool isEnabled;
 }
 
-@property (retain) PhenomeNode * fromNode;
-@property (retain) PhenomeNode * toNode;
+@property (retain) PhenomeNode* fromNode;
+@property (retain) PhenomeNode* toNode;
 @property double weight;
 @property bool isEnabled;
 

@@ -13,27 +13,29 @@
 @class Genome;
 
 @interface Network : NSObject {
-    Genome * genome;
-    int numNodes;
-    int numLinks;
+    //Genome* genome;
+    //int numNodes;
+    //int numLinks;
     
-    NSMutableArray * allNodes;
-    NSMutableArray * inputNodes;
-    NSMutableArray * outputNodes;
-    NSMutableArray * allLinks;
+    //NSMutableArray* allNodes;
+    //NSMutableArray* inputNodes;
+    //NSMutableArray* outputNodes;
+    NSMutableArray* allLinks;
 }
 
-@property (retain) Genome * genome;
+@property (retain) Genome* genome;
 @property int numNodes;
 @property int numLinks;
-@property (retain) NSMutableArray * allNodes;
-@property (retain) NSMutableArray * inputNodes;
-@property (retain) NSMutableArray * outputNodes;
+@property (retain) NSMutableArray* allNodes;
+@property (retain) NSMutableArray* inputNodes;
+@property (retain) NSMutableArray* outputNodes;
 
-- (id)initWithGenome:(Genome *) genotype;
-//-(void) updateSensors: (NSArray *) inputValuesArray;
-//-(void) activateNetwork;
-//-(void) flushNetwork;
+-(id) initWithGenome:(Genome*) genotype;
+-(void) updateSensors: (NSArray*) inputValuesArray;
+-(NSArray*) activateNetwork;
+-(void) flushNetwork;
+
++(NSArray*) fsoftmax:(NSArray*) nodes;
 
 @end
 

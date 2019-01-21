@@ -13,28 +13,28 @@
 //@class ONNetwork;
 
 @interface Genome : NSObject<NSCopying> {
-    int genomeID;
-    NSMutableArray * genoNodes;
-    NSMutableArray * genoLinks;
+    //int genomeID;
+    //NSMutableArray* genoNodes;
+    //NSMutableArray* genoLinks;
 }
 
 @property int genomeID;
-@property (retain) NSMutableArray * genoNodes;
-@property (retain) NSMutableArray * genoLinks;
+@property (retain) NSMutableArray* genoNodes;
+@property (retain) NSMutableArray* genoLinks;
 
-+(Genome *) createGenome: (int) nInputs outputs: (int) nOutputs;
-//+(Genome *) createXORGenome;
--(Genome *) randomiseWeights;
-//-(void) perturbSingleLinkWeight;
-//-(void) perturbAllLinkWeights;
-//-(void) reEnableRandomLink;
-//-(void) toggleRandomLink;
-//-(void) addLink;
-//-(void) addNode;
-//-(Genome *) mutateGenome;
-//-(Genome *) offspringWithGenome: (Genome *) mumGenome;
-//-(void) verifyGenome;
-//-(double) similarityScoreWithGenome: (Genome *) otherGenome;
++(Genome*) createGenome: (int) nInputs outputs: (int) nOutputs;
+-(void) saveGenome: (NSString*) filename;
+-(Genome*) randomiseWeights;
+-(void) perturbSingleLinkWeight;
+-(void) perturbAllLinkWeights;
+-(void) reEnableRandomLink;
+-(void) toggleRandomLink;
+-(void) addNode;
+-(void) addLink;
+-(Genome*) mutateGenome;
+-(Genome*) offspringWithGenome: (Genome*) mumGenome;
+-(void) verifyGenome;
+-(double) similarityScoreWithGenome: (Genome*) otherGenome;
 //-(double) gaussrand;
 
 @end

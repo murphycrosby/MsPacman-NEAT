@@ -30,7 +30,7 @@
     return linkID;
 }
 
--(NSComparisonResult) compareIDWith: (GenomeLink *) anotherLink {
+-(NSComparisonResult) compareIDWith: (GenomeLink*) anotherLink {
     if (self.linkID < anotherLink.linkID) {
         return NSOrderedAscending;
     }
@@ -41,13 +41,13 @@
 }
 
 
--(NSString *) description {
+-(NSString*) description {
     return [NSString stringWithFormat:@"Link %d connecting %d to %d with weight: %1.3f %@",
             linkID, fromNode, toNode, weight, (isEnabled)?@"":@"(disabled)"];
 }
 
--(GenomeLink *) copyWithZone: (NSZone *) zone {
-    GenomeLink * copiedGenoLink = [[GenomeLink alloc] init];
+-(GenomeLink*) copyWithZone: (NSZone*) zone {
+    GenomeLink* copiedGenoLink = [[GenomeLink alloc] init];
     copiedGenoLink.linkID = linkID;
     copiedGenoLink.fromNode = fromNode;
     copiedGenoLink.toNode = toNode;

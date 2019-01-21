@@ -17,7 +17,7 @@ void controlc_handler(int s){
     exit(1);
 }
 
-int main(int argc, const char * argv[]) {
+int main(int argc, const char* argv[]) {
     @autoreleasepool {
         NSLog(@"Hello, World!");
         
@@ -27,9 +27,9 @@ int main(int argc, const char * argv[]) {
         sigIntHandler.sa_flags = 0;
         sigaction(SIGINT, &sigIntHandler, NULL);
         
-        g = [[Game alloc] init:1];
+        g = [[Game alloc] init:3];
         if(g) {
-            [g playEvolve: 1];
+            [g playEvolve];
         }
         g = nil;
         

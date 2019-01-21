@@ -14,16 +14,16 @@
 @class GenomeLink;
 
 @interface InnovationDb : NSObject {
-    NSMutableArray * linkInnovations;
-    NSMutableArray * nodeRecord;
+    NSMutableArray* linkInnovations;
+    NSMutableArray* nodeRecord;
 }
 
--(GenomeNode *) getNodeWithID: (int) nodeID;
--(GenomeNode *) possibleNodeExistsFromNode: (int) fNode toNode: (int) tNode;
--(void) insertNewNode:(GenomeNode *) newNode fromNode:(int) fNode toNode: (int) tNode;
--(void) insertNewLink:(GenomeLink *) newLink fromNode:(int) fNode toNode: (int) tNode;
--(GenomeLink *) possibleLinkExistsFromNode: (int) fNode toNode: (int) tNode;
-+(InnovationDb *) sharedDb;
+-(GenomeNode*) getNodeWithID: (int) nodeID;
+-(GenomeNode*) possibleNodeExistsFromNode: (int) fNode toNode: (int) tNode;
+-(void) insertNewNode:(GenomeNode*) newNode fromNode:(int) fNode toNode: (int) tNode;
+-(void) insertNewLink:(GenomeLink*) newLink fromNode:(int) fNode toNode: (int) tNode;
+-(GenomeLink*) possibleLinkExistsFromNode: (int) fNode toNode: (int) tNode;
++(InnovationDb*) sharedDb;
 +(int) getNextGenomeNodeID;
 +(int) getNextInnovationID;
 

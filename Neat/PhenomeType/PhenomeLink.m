@@ -10,10 +10,10 @@
 #import "PhenomeLink.h"
 #import "PhenomeNode.h"
 
-@implementation ONPhenoLink
+@implementation PhenoLink
 @synthesize weight, fromNode, toNode, isEnabled;
 
--(NSString *) description {
+-(NSString*) description {
     return [NSString stringWithFormat:@"Link connecting %d to %d with weight: %1.3f %@",
             fromNode.nodeID, toNode.nodeID, weight, (isEnabled)?@"":@"(disabled)"];
 }

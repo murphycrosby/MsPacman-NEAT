@@ -13,10 +13,10 @@
 {
     
 }
-@property (strong, nonatomic) NSMutableArray * outputArray;
+@property (strong, nonatomic) NSMutableArray* outputArray;
 @property int order;
 
--(instancetype)initWindowListData:(NSMutableArray *)array;
+-(instancetype)initWindowListData:(NSMutableArray*)array;
 void WindowListApplierFunction(const void *inputDictionary, void *context);
 
 @end

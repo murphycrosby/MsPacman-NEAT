@@ -14,27 +14,26 @@
 @class Network;
 
 @interface Organism : NSObject {
-    Genome* genome;
-    Network* network;
+    //Genome* genome;
+    //Network* network;
     
-    double fitness;
-    double speciesAdjustedFitness;
+    //double fitness;
+    //double speciesAdjustedFitness;
 }
 
-@property (retain) Genome * genome;
+@property (retain) Network* network;
+@property (retain) Genome* genome;
 @property double fitness;
 @property double speciesAdjustedFitness;
 
--(Network *) network;
--(id)initWithGenome: (Genome *) dna;
+//-(Network*) network;
+-(id)initWithGenome: (Genome*) dna;
 -(void) developNetwork;
--(void) processInput: (NSArray *) inputValuesArray;
+-(NSArray*) predict: (NSArray*) inputValuesArray;
 -(void) destroyNetwork;
-/*
--(Organism *) reproduceChildOrganism;
--(Organism *) reproduceChildOrganismWithOrganism: (Organism *) lessFitMate;
--(NSComparisonResult) compareFitnessWith: (Organism *) anotherOrganism;
-*/
+-(Organism*) reproduceChildOrganism;
+-(Organism*) reproduceChildOrganismWithOrganism: (Organism*) lessFitMate;
+-(NSComparisonResult) compareFitnessWith: (Organism*) anotherOrganism;
 
 @end
 

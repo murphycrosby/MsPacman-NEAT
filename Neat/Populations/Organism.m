@@ -12,13 +12,13 @@
 #import "Network.h"
 
 @implementation Organism
-@synthesize genome, fitness, speciesAdjustedFitness;
+@synthesize network, genome, fitness, speciesAdjustedFitness;
 
--(NSString *) description {
+-(NSString*) description {
     return [NSString stringWithFormat: @"Organism with fitness: %1.3f", fitness];
 }
 
-- (id)initWithGenome: (Genome *) dna
+- (id)initWithGenome: (Genome*) dna
 {
     self = [super init];
     if (self) {
@@ -29,39 +29,35 @@
     return self;
 }
 
--(Network *) network {
-    return network;
-}
-
 -(void) developNetwork {
     NSAssert(genome != nil, @"This organisms genome has not been set - cannot develop network without a genome");
     network = [[Network alloc] initWithGenome:genome];
 }
 
--(void) processInput: (NSArray *) inputValuesArray {
-    
+-(NSArray*) predict: (NSArray*) inputValuesArray {
+    [network updateSensors:inputValuesArray];
+    return [network activateNetwork];
 }
 
 -(void) destroyNetwork {
     network = nil;
 }
-/*
 
--(Organism *) reproduceChildOrganism {
-    Genome * childGenome = [genome copy];
+-(Organism*) reproduceChildOrganism {
+    Genome* childGenome = [genome copy];
     [childGenome mutateGenome];
-    Organism * childOrganism = [[Organism alloc] initWithGenome:childGenome];
+    Organism* childOrganism = [[Organism alloc] initWithGenome:childGenome];
     return childOrganism;
 }
 
--(Organism *) reproduceChildOrganismWithOrganism: (Organism *) lessFitMate {
-    Genome * childGenome = [genome offspringWithGenome: lessFitMate.genome];
+-(Organism*) reproduceChildOrganismWithOrganism: (Organism*) lessFitMate {
+    Genome* childGenome = [genome offspringWithGenome: lessFitMate.genome];
     [childGenome mutateGenome];
-    Organism * childOrganism = [[Organism alloc] initWithGenome:childGenome];
+    Organism* childOrganism = [[Organism alloc] initWithGenome:childGenome];
     return childOrganism;
 }
 
--(NSComparisonResult) compareFitnessWith: (Organism *) anotherOrganism {
+-(NSComparisonResult) compareFitnessWith: (Organism*) anotherOrganism {
     if (self.fitness < anotherOrganism.fitness) {
         return NSOrderedDescending;
     }
@@ -71,11 +67,11 @@
     return NSOrderedAscending;
 }
 
--(Organism *) copyWithZone: (NSZone *) zone {
-    Organism * copiedOrganism = [[Organism alloc] init];
+-(Organism*) copyWithZone: (NSZone*) zone {
+    Organism* copiedOrganism = [[Organism alloc] init];
     copiedOrganism.genome = [genome copy];
     copiedOrganism.fitness = fitness;
     return copiedOrganism;
 }
-*/
+
 @end

@@ -14,18 +14,20 @@
 @class Genome;
 
 @interface Population : NSObject {
-    NSMutableArray * allOrganisms;
-    NSMutableArray * allSpecies;
-    Organism * fittestOrganismEver;
-    int generation;
+    //NSMutableArray* allOrganisms;
+    //NSMutableArray* allSpecies;
+    Organism* fittestOrganismEver;
+    //int generation;
 }
 
-@property (strong, nonatomic) NSMutableArray * allOrganisms;
-@property (strong, nonatomic) NSMutableArray * allSpecies;
+@property (strong, nonatomic) NSMutableArray* allOrganisms;
+@property (strong, nonatomic) NSMutableArray* allSpecies;
 @property int generation;
 
-//-(void) rePopulateFromFittest;
-+(Population *) spawnInitialGenerationFromGenome: (int) nOrganisms genome:(Genome *) genesisGenome;
+-(void) saveOganisms: (NSString*) filename;
+-(void) evolvePopulation;
+
++(Population*) spawnInitialGenerationFromGenome: (Genome*) genesisGenome;
 
 @end
 

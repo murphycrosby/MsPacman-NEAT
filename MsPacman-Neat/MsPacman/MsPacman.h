@@ -24,6 +24,12 @@
     
 }
 
+@property (nonatomic, assign) CGRect msPacman;
+@property (nonatomic, assign) CGRect blinky;
+@property (nonatomic, assign) CGRect pinky;
+@property (nonatomic, assign) CGRect inky;
+@property (nonatomic, assign) CGRect sue;
+
 -(id)init: (int) logLvl;
 -(void) saveScreenshot: (CGImageRef) screenshot filename: (NSString*) filename number: (NSString*) num;
 -(BOOL) isGameOver: (CGImageRef) screenshot;

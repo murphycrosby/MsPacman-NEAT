@@ -19,7 +19,7 @@ NSString *kWindowLevelKey = @"windowLevel";
 NSString *kWindowOrderKey = @"windowOrder";
 NSString *kWindowBounds = @"bounds";
 
--(instancetype)initWindowListData:(NSMutableArray *)array
+-(instancetype)initWindowListData:(NSMutableArray*) array
 {
     self = [super init];
     

@@ -11,6 +11,12 @@
 
 @implementation MsPacman
 
+@synthesize msPacman;
+@synthesize blinky;
+@synthesize pinky;
+@synthesize inky;
+@synthesize sue;
+
 - (id)init: (int) logLvl {
     self = [super init];
     if (!self) {
@@ -348,6 +354,9 @@
     for(int ms = 0; ms < [mspacman_array count]; ms++) {
         CGRect rect = [[mspacman_array objectAtIndex:ms] rectValue];
         if(rect.size.width >= 25 && rect.size.height >= 25) {
+            if(ms == 0) {
+                msPacman = rect;
+            }
             CGRect up = CGRectMake(rect.origin.x + 8, rect.origin.y - 10, rect.size.width - 16, 5);
             CGRect right = CGRectMake(rect.origin.x + rect.size.width + 10, rect.origin.y + 8, 5, rect.size.height - 16);
             CGRect down = CGRectMake(rect.origin.x + 8, rect.origin.y + rect.size.height + 10, rect.size.width - 16, 5);
@@ -417,6 +426,9 @@
     for(int ms = 0; ms < [blinky_array count]; ms++) {
         CGRect rect = [[blinky_array objectAtIndex:ms] rectValue];
         if(rect.size.width >= 30 && rect.size.height >= 30) {
+            if(ms == 0) {
+                blinky = rect;
+            }
             [blinkyHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
             [blinkyHistory removeObjectAtIndex:4];
             if(logLevel >= 3) {
@@ -460,6 +472,9 @@
     for(int ms = 0; ms < [pinky_array count]; ms++) {
         CGRect rect = [[pinky_array objectAtIndex:ms] rectValue];
         if(rect.size.width >= 30 && rect.size.height >= 30) {
+            if(ms == 0) {
+                pinky = rect;
+            }
             [pinkyHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
             [pinkyHistory removeObjectAtIndex:4];
             
@@ -498,6 +513,9 @@
     for(int ms = 0; ms < [inky_array count]; ms++) {
         CGRect rect = [[inky_array objectAtIndex:ms] rectValue];
         if(rect.size.width >= 30 && rect.size.height >= 30) {
+            if(ms == 0) {
+                inky = rect;
+            }
             [inkyHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
             [inkyHistory removeObjectAtIndex:4];
             
@@ -536,6 +554,9 @@
     for(int ms = 0; ms < [sue_array count]; ms++) {
         CGRect rect = [[sue_array objectAtIndex:ms] rectValue];
         if(rect.size.width >= 30 && rect.size.height >= 30) {
+            if(ms == 0) {
+                sue = rect;
+            }
             [sueHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
             [sueHistory removeObjectAtIndex:4];
             
@@ -575,7 +596,7 @@
         CGRect rect = [[scared_blue_array objectAtIndex:ms] rectValue];
         if(rect.size.width >= 30 && rect.size.height >= 30) {
             [scaredGhostHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
-            [scaredGhostHistory removeObjectAtIndex:4];
+            [scaredGhostHistory removeObjectAtIndex:16];
             
             if(logLevel >= 3) {
                 NSLog(@"%d.  %d,%d,%d,%d w:%d h:%d", ms,
@@ -598,7 +619,7 @@
         CGRect rect = [[scared_gray_array objectAtIndex:ms] rectValue];
         if(rect.size.width >= 30 && rect.size.height >= 30) {
             [scaredGhostHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
-            [scaredGhostHistory removeObjectAtIndex:4];
+            [scaredGhostHistory removeObjectAtIndex:16];
             
             if(logLevel >= 3) {
                 NSLog(@"%d.  %d,%d,%d,%d w:%d h:%d", ms,

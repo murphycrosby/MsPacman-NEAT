@@ -15,7 +15,7 @@
 @implementation Innovation
 @synthesize nodeOrLink, fromNodeID, toNodeID;
 
--(NSString *) description {
+-(NSString*) description {
     if ([nodeOrLink isMemberOfClass: [GenomeLink class]]) {
         return [NSString stringWithFormat: @"Link Innovation %d between node %d and node %d",
                 [nodeOrLink getInnovationID], fromNodeID, toNodeID];

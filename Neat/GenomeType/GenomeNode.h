@@ -20,14 +20,17 @@ typedef enum NodeType {
 } NodeType;
 
 @interface GenomeNode : NSObject <InnovationInformationProtocol> {
-    int nodeID;
-    NodeType nodeType;
-    CGPoint nodePosition;
+    //int nodeID;
+    //NodeType nodeType;
+    //CGPoint nodePosition;
 }
 
 @property int nodeID;
 @property NodeType nodeType;
 @property CGPoint nodePosition;
+
+-(NSComparisonResult) compareIDWith: (GenomeNode*) anotherNode;
++(NSString*) NodeTypeString: (NodeType) nodeType;
 
 @end
 

@@ -21,8 +21,8 @@
 
 @interface Innovation : NSObject {
     //id <InnovationInformationProtocol> nodeOrLink;
-    int fromNodeID;
-    int toNodeID;
+    //int fromNodeID;
+    //int toNodeID;
 }
 
 @property (strong) id nodeOrLink;

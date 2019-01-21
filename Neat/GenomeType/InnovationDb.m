@@ -16,7 +16,7 @@
 
 static int nodeCounter = 0;
 static int innovationCounter = 0;
-static InnovationDb * sharedInnovationDb;
+static InnovationDb* sharedInnovationDb;
 
 - (id)init
 {
@@ -28,8 +28,8 @@ static InnovationDb * sharedInnovationDb;
     return self;
 }
 
--(GenomeNode *) getNodeWithID: (int) nodeID {
-    for (Innovation * nextNode in nodeRecord) {
+-(GenomeNode*) getNodeWithID: (int) nodeID {
+    for (Innovation* nextNode in nodeRecord) {
         if ([nextNode.nodeOrLink getInnovationID] == nodeID) {
             return [nextNode.nodeOrLink copy];
         }
@@ -37,8 +37,8 @@ static InnovationDb * sharedInnovationDb;
     return nil;
 }
 
--(GenomeNode *) possibleNodeExistsFromNode: (int) fNode toNode: (int) tNode {
-    for (Innovation * nextInnovation in nodeRecord) {
+-(GenomeNode*) possibleNodeExistsFromNode: (int) fNode toNode: (int) tNode {
+    for (Innovation* nextInnovation in nodeRecord) {
         if (nextInnovation.fromNodeID == fNode &&
             nextInnovation.toNodeID == tNode) {
             return [nextInnovation.nodeOrLink copy];
@@ -47,8 +47,8 @@ static InnovationDb * sharedInnovationDb;
     return nil;
 }
 
--(void) insertNewNode:(GenomeNode *) newNode fromNode:(int) fNode toNode: (int) tNode {
-    Innovation * newInnovation = [[Innovation alloc] init];
+-(void) insertNewNode:(GenomeNode*) newNode fromNode:(int) fNode toNode: (int) tNode {
+    Innovation* newInnovation = [[Innovation alloc] init];
     newInnovation.nodeOrLink = [newNode copy];
     newInnovation.fromNodeID = fNode;
     newInnovation.toNodeID = tNode;
@@ -56,8 +56,8 @@ static InnovationDb * sharedInnovationDb;
 }
 
 
--(GenomeLink *) possibleLinkExistsFromNode: (int) fNode toNode: (int) tNode {
-    for (Innovation * nextInnovation in linkInnovations) {
+-(GenomeLink*) possibleLinkExistsFromNode: (int) fNode toNode: (int) tNode {
+    for (Innovation* nextInnovation in linkInnovations) {
         if (nextInnovation.fromNodeID == fNode &&
             nextInnovation.toNodeID == tNode) {
             return [nextInnovation.nodeOrLink copy];
@@ -66,15 +66,15 @@ static InnovationDb * sharedInnovationDb;
     return nil;
 }
 
--(void) insertNewLink:(GenomeLink *) newLink fromNode:(int) fNode toNode: (int) tNode {
-    Innovation * newInnovation = [[Innovation alloc] init];
+-(void) insertNewLink:(GenomeLink*) newLink fromNode:(int) fNode toNode: (int) tNode {
+    Innovation* newInnovation = [[Innovation alloc] init];
     newInnovation.nodeOrLink = [newLink copy];
     newInnovation.fromNodeID = fNode;
     newInnovation.toNodeID = tNode;
     [linkInnovations addObject:newInnovation];
 }
 
--(NSString *) description {
+-(NSString*) description {
     return [NSString stringWithFormat:@"%@%@", [nodeRecord description], [linkInnovations description]];
 }
 
@@ -86,7 +86,7 @@ static InnovationDb * sharedInnovationDb;
     return innovationCounter++;
 }
 
-+(InnovationDb *) sharedDb {
++(InnovationDb*) sharedDb {
     if (sharedInnovationDb == nil) {
         sharedInnovationDb = [[InnovationDb alloc] init];
     }

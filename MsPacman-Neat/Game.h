@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,readwrite) int logLevel;
 
 - (id)init: (int)logLvl;
-- (void) playEvolve: (int) generations;
+- (void) playEvolve;
 - (void) playBest;
 
 @end
