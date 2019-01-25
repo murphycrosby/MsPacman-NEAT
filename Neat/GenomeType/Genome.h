@@ -23,7 +23,7 @@
 @property (retain) NSMutableArray* genoLinks;
 
 +(Genome*) createGenome: (int) nInputs outputs: (int) nOutputs;
--(void) saveGenome: (NSString*) filename;
+-(void) printGenome;
 -(Genome*) randomiseWeights;
 -(void) perturbSingleLinkWeight;
 -(void) perturbAllLinkWeights;

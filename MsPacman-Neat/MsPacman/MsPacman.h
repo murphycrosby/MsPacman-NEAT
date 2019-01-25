@@ -33,6 +33,7 @@
 -(id)init: (int) logLvl;
 -(void) saveScreenshot: (CGImageRef) screenshot filename: (NSString*) filename number: (NSString*) num;
 -(BOOL) isGameOver: (CGImageRef) screenshot;
+-(BOOL) isReady: (CGImageRef) screenshot;
 -(long) getScore: (CGImageRef) screenshot;
 -(NSMutableArray*) getInputValues: (CGImageRef) screenshot;
 

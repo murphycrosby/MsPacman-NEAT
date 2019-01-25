@@ -16,15 +16,14 @@
 @interface Population : NSObject {
     //NSMutableArray* allOrganisms;
     //NSMutableArray* allSpecies;
-    Organism* fittestOrganismEver;
     //int generation;
 }
 
 @property (strong, nonatomic) NSMutableArray* allOrganisms;
 @property (strong, nonatomic) NSMutableArray* allSpecies;
+@property (strong, nonatomic) Organism* fittestOrganismEver;
 @property int generation;
 
--(void) saveOganisms: (NSString*) filename;
 -(void) evolvePopulation;
 
 +(Population*) spawnInitialGenerationFromGenome: (Genome*) genesisGenome;

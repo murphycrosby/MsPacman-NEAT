@@ -108,8 +108,9 @@ static int speciesCounter = 0;
     }
     
     for (int i = 1; i < numToSpawn; i++) {
-        Organism* dadOrganism = [speciesOrganisms objectAtIndex:(rand() % survivingOrganisms)];
-        Organism* mumOrganism = [speciesOrganisms objectAtIndex:(rand() % survivingOrganisms)];
+        Organism* dadOrganism = [speciesOrganisms objectAtIndex:(arc4random() % survivingOrganisms)];
+        Organism* mumOrganism = [speciesOrganisms objectAtIndex:(arc4random() % survivingOrganisms)];
+        //blantent sexism right here
         if (mumOrganism.fitness > dadOrganism.fitness) {
             Organism* swapOrganism = dadOrganism;
             dadOrganism = mumOrganism;

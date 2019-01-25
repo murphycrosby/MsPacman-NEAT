@@ -35,8 +35,17 @@
 }
 
 -(NSArray*) predict: (NSArray*) inputValuesArray {
+    [network flushNetwork];
     [network updateSensors:inputValuesArray];
     return [network activateNetwork];
+}
+
+-(void) printOganism {
+    NSLog(@"======= Organism =======");
+    NSLog(@"Fitness: %f", fitness);
+    [genome printGenome];
+    NSLog(@"===========================");
+    NSLog(@" ");
 }
 
 -(void) destroyNetwork {

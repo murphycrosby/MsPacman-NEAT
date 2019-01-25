@@ -156,6 +156,98 @@
     return items >= 5;
 }
 
+-(BOOL) isReady: (CGImageRef) screenshot {
+    size_t width;
+    size_t height;
+    size_t bitsPerComponent;
+    size_t bitmapBytesPerRow;
+    size_t bitmapByteCount;
+    CGRect rect;
+    CGImageRef imageRef;
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+    
+    int count = 0;
+    int items = 0;
+    int x = 684;
+    
+    while(x >= 500) {
+        rect = CGRectMake(x, 554, 30, 25);
+        imageRef = CGImageCreateWithImageInRect(screenshot, rect);
+        
+        width = CGImageGetWidth(imageRef);
+        height = CGImageGetHeight(imageRef);
+        bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
+        bitmapBytesPerRow = (width * 4);
+        bitmapByteCount = (bitmapBytesPerRow * height);
+        
+        void* bitmapData = malloc( bitmapByteCount );
+        
+        CGContextRef context = CGBitmapContextCreate (bitmapData,
+                                                      width,
+                                                      height,
+                                                      bitsPerComponent,
+                                                      bitmapBytesPerRow,
+                                                      colorSpace,
+                                                      kCGImageAlphaPremultipliedFirst);
+        
+        rect = CGRectMake(0, 0, width, height);
+        CGContextDrawImage(context, rect, imageRef);
+        
+        unsigned char* data = CGBitmapContextGetData (context);
+        BOOL pix1 = (data[(4*((width*8)+7))+1] != 0 && data[(4*((width*8)+7))+2] != 0 && data[(4*((width*8)+7))+3] != 0);
+        BOOL pix2 = (data[(4*((width*8)+14))+1] != 0 && data[(4*((width*8)+14))+2] != 0 && data[(4*((width*8)+14))+3] != 0);
+        BOOL pix3 = (data[(4*((width*8)+22))+1] != 0 && data[(4*((width*8)+22))+2] != 0 && data[(4*((width*8)+22))+3] != 0);
+        BOOL pix4 = (data[(4*((width*16)+7))+1] != 0 && data[(4*((width*16)+7))+2] != 0 && data[(4*((width*16)+7))+3] != 0);
+        BOOL pix5 = (data[(4*((width*16)+14))+1] != 0 && data[(4*((width*16)+14))+2] != 0 && data[(4*((width*16)+14))+3] != 0);
+        BOOL pix6 = (data[(4*((width*16)+22))+1] != 0 && data[(4*((width*16)+22))+2] != 0 && data[(4*((width*16)+22))+3] != 0);
+        
+        if(count == 0) {
+            //!
+            if(!pix1 && pix2 && !pix3 && !pix4 && !pix5 && !pix6) {
+                items++;
+            }
+        } else if(count == 1) {
+            //Y
+            if(pix1 && !pix2 && pix3 && !pix4 && pix5 && !pix6) {
+                items++;
+            }
+        }
+        else if (count == 2){
+            //D
+            if(pix1 && !pix2 && pix3 && pix4 && !pix5 && pix6) {
+                items++;
+            }
+        } else if (count == 3){
+            //A
+            if(pix1 && !pix2 && pix3 && pix4 && !pix5 && pix6) {
+                items++;
+            }
+        } else if (count == 4){
+            //E
+            if(pix1 && !pix2 && !pix3 && pix4 && !pix5 && !pix6) {
+                items++;
+            }
+        } else if (count == 5){
+            //R
+            if(pix1 && !pix2 && pix3 && pix4 && pix5 && !pix6) {
+                items++;
+            }
+        }
+        
+        if (data) { free(data); }
+        CGContextRelease(context);
+        CGImageRelease(imageRef);
+        
+        count++;
+        x = x - 30 - 1;
+    }
+    
+    CGColorSpaceRelease(colorSpace);
+    
+    return items >= 3;
+}
+
 -(long) getScore: (CGImageRef) screenshot {
     size_t width;
     size_t height;

@@ -16,7 +16,7 @@
 
 
 @implementation Population
-@synthesize allOrganisms, allSpecies, generation;
+@synthesize allOrganisms, allSpecies, fittestOrganismEver, generation;
 
 - (id)init
 {
@@ -32,18 +32,6 @@
 -(NSString*) description {
     return [NSString stringWithFormat: @"Generation %d, number of organisms %lu, highest fitness to date %1.3f: %@",
             generation, (unsigned long)[allOrganisms count],fittestOrganismEver.fitness, [allSpecies description]];
-}
-
--(void) saveOganisms: (NSString*) filename {
-    for (int i = 0; i < [allOrganisms count]; i++) {
-        Organism* o = [allOrganisms objectAtIndex:i];
-        Genome* g = [o genome];
-        
-        NSLog(@"======= Organism %d =======", i);
-        [g saveGenome:filename];
-        NSLog(@"===========================");
-        NSLog(@" ");
-    }
 }
 
 -(void) evolvePopulation {
@@ -98,9 +86,13 @@
     double averageFitness = sumAdjustedFitness / allOrganisms.count;
     
     // sort the entire population and find out if we have a new best
-    [allOrganisms sortUsingSelector:@selector(compareFitnessWith:)];
-    
+    //[allOrganisms sortUsingSelector:@selector(compareFitnessWith:)];
+    //Organism* org = [allOrganisms objectAtIndex:0];
+    //if(fittestOrganismEver.fitness < org.fitness) {
+    //    fittestOrganismEver = [org copy];
+    //}
     [allOrganisms removeAllObjects];
+    
     for (Species* nextSpecies in allSpecies) {
         int numberToCreate = (int) [nextSpecies numberToSpawnBasedOnAverageFitness:averageFitness];
         NSArray* newGeneration = [nextSpecies spawnOrganisms:numberToCreate];

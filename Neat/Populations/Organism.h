@@ -30,6 +30,7 @@
 -(id)initWithGenome: (Genome*) dna;
 -(void) developNetwork;
 -(NSArray*) predict: (NSArray*) inputValuesArray;
+-(void) printOganism;
 -(void) destroyNetwork;
 -(Organism*) reproduceChildOrganism;
 -(Organism*) reproduceChildOrganismWithOrganism: (Organism*) lessFitMate;

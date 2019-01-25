@@ -27,7 +27,7 @@ int main(int argc, const char* argv[]) {
         sigIntHandler.sa_flags = 0;
         sigaction(SIGINT, &sigIntHandler, NULL);
         
-        g = [[Game alloc] init:3];
+        g = [[Game alloc] init:2];
         if(g) {
             [g playEvolve];
         }

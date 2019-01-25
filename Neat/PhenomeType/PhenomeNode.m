@@ -52,6 +52,7 @@
     for (PhenoLink* nextIncomingLink in incomingPhenoLinks) {
         if (nextIncomingLink.isEnabled) {
             activeSum += (nextIncomingLink.fromNode.activationValue * nextIncomingLink.weight);
+            /*
             NSLog(@"F(%i) [%1.3f] --[%1.3f]--> T(%i) [%1.3f] == +%1.3f = %1.3f",
                   nextIncomingLink.fromNode.nodeID,
                   nextIncomingLink.fromNode.activationValue,
@@ -60,10 +61,13 @@
                   nextIncomingLink.toNode.activationValue,
                   (nextIncomingLink.fromNode.activationValue * nextIncomingLink.weight),
                   activeSum);
+            */
         }
     }
-    
-    activationValue += activeSum;
+    //NSLog(@"activationValue B: %1.3f :  %1.3f", activationValue, activeSum);
+    activationValue += [PhenomeNode fsigmoid: activeSum slope:0 constant:0];
+    //NSLog(@"activationValue A: %1.3f", activationValue);
+    //activationValue += activeSum;
     activated = TRUE;
     
     for(PhenoLink* outgoingLink in outgoingPhenoLinks) {

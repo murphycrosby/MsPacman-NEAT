@@ -94,6 +94,7 @@ static bool genesisOccurred = false;
     biasNode.nodeType = BIAS;
     biasNode.nodePosition = CGPointMake(0.9, 0.1);
     [newGenome.genoNodes addObject: biasNode];
+    [[InnovationDb sharedDb] insertNewNode:biasNode fromNode:0 toNode:0];
     nInputs++;
     
     positionXOffset = 1/(double)(nOutputs+1);
@@ -133,30 +134,10 @@ static bool genesisOccurred = false;
     return self;
 }
 
--(void) saveGenome: (NSString*) filename {
+-(void) printGenome {
     for (int i = 0; i < [genoNodes count]; i++) {
         GenomeNode* gn = [genoNodes objectAtIndex:i];
-        NSString* nodeType;
-        switch (gn.nodeType) {
-            case 0:
-                nodeType = @"UNKNOWN";
-                break;
-            case 1:
-                nodeType = @"INPUT";
-                break;
-            case 2:
-                nodeType = @"HIDDEN";
-                break;
-            case 3:
-                nodeType = @"OUTPUT";
-                break;
-            case 4:
-                nodeType = @"BIAS";
-                break;
-            default:
-                nodeType = @"UNKNOWN";
-                break;
-        }
+        NSString* nodeType = [GenomeNode NodeTypeString:gn.nodeType];
         NSLog(@"Id: %d - %@", gn.nodeID, nodeType);
         for(int l = 0; l < [genoLinks count]; l++) {
             GenomeLink* gl = [genoLinks objectAtIndex:l];
@@ -199,7 +180,7 @@ double gaussrand() {
 }
 
 -(void) perturbSingleLinkWeight {
-    GenomeLink* randomLink = [genoLinks objectAtIndex:rand() % genoLinks.count];
+    GenomeLink* randomLink = [genoLinks objectAtIndex:arc4random() % genoLinks.count];
     if (randomDouble() < [Parameters mutationProbabilityReplaceWeight]) {
         randomLink.weight = gaussrand();
     }
@@ -227,13 +208,13 @@ double gaussrand() {
         }
     }
     if (disabledLinks.count > 0) {
-        GenomeLink* randomLink = [disabledLinks objectAtIndex:rand() % disabledLinks.count];
+        GenomeLink* randomLink = [disabledLinks objectAtIndex:arc4random() % disabledLinks.count];
         randomLink.isEnabled = true;
     }
 }
 
 -(void) toggleRandomLink {
-    GenomeLink* randomLink = [genoLinks objectAtIndex:rand() % genoLinks.count];
+    GenomeLink* randomLink = [genoLinks objectAtIndex:arc4random() % genoLinks.count];
     if (randomLink.isEnabled) {
         randomLink.isEnabled = false;
     }
@@ -246,7 +227,7 @@ double gaussrand() {
     // select link at random
     GenomeLink* randomLink = nil;
     do {
-        randomLink = [genoLinks objectAtIndex:rand() % [genoLinks count]];
+        randomLink = [genoLinks objectAtIndex:arc4random() % [genoLinks count]];
     } while (!randomLink.isEnabled);
     
     GenomeNode* fromNode = [self getNodeWithID:randomLink.fromNode];
@@ -307,8 +288,8 @@ double gaussrand() {
 
 -(void) addLink {
     // select 2 nodes at random
-    GenomeNode* randomFromNode = [genoNodes objectAtIndex:rand() % [genoNodes count]];
-    GenomeNode* randomToNode = [genoNodes objectAtIndex:rand() % [genoNodes count]];
+    GenomeNode* randomFromNode = [genoNodes objectAtIndex:arc4random() % [genoNodes count]];
+    GenomeNode* randomToNode = [genoNodes objectAtIndex:arc4random() % [genoNodes count]];
     
     // make sure the link is valid
     
@@ -422,7 +403,6 @@ double gaussrand() {
             else {
                 dadNextLink = [genoLinks objectAtIndex:dadIndex];
             }
-            
         }
         // disjoint gene
         else if (mumNextLink.linkID < dadNextLink.linkID) {
@@ -438,6 +418,7 @@ double gaussrand() {
             }
         }
     }
+    
     while (dadHasLinksLeft) {
         GenomeLink* dadLink = [dadNextLink copy];
         [childGenome.genoLinks addObject:dadLink];

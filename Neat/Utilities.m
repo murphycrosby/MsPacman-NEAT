@@ -9,10 +9,13 @@
 #import <Foundation/Foundation.h>
 #import "Utilities.h"
 
+#define ARC4RANDOM_MAX 0x100000000
+
 @implementation Utilities
 
 double randomDouble (void) {
-    return (rand())/(RAND_MAX+1.0);
+    //return (rand())/(RAND_MAX+1.0);
+    return ((double)arc4random()) / (ARC4RANDOM_MAX + 1.0);
 }
 
 double randomClampedDouble (void) {

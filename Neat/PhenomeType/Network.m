@@ -121,7 +121,7 @@
 
 -(NSArray*) activateNetwork {
     for (PhenomeNode* nextPhenoNode in allNodes) {
-        if (nextPhenoNode.nodeType == INPUT) {
+        if (nextPhenoNode.nodeType == INPUT || nextPhenoNode.nodeType == BIAS) {
             //We need to process in order starting from the input layer
             [nextPhenoNode activate];
         }
