@@ -11,7 +11,7 @@
 
 #import "Innovation.h"
 
-@interface GenomeLink : NSObject <InnovationInformationProtocol>{
+@interface GenomeLink : NSObject <InnovationInformationProtocol, NSCopying, NSSecureCoding> {
     //int linkID;
     //int fromNode;
     //int toNode;
@@ -25,7 +25,8 @@
 @property double weight;
 @property bool isEnabled;
 
-- (id)initNewlyInnovatedLinkFromNode: (int) fNode toNode: (int) tNode withWeight: (double) wght;
+-(id) initNewlyInnovatedLinkFromNode: (int) fNode toNode: (int) tNode withWeight: (double) wght;
+-(BOOL) isEqual:(GenomeLink*) link;
 
 @end
 

@@ -11,7 +11,6 @@
 #import "Genome.h"
 #import "GenomeLink.h"
 #import "GenomeNode.h"
-//#import "Network.h"
 #import "InnovationDb.h"
 #import "Parameters.h"
 
@@ -41,6 +40,35 @@ static bool genesisOccurred = false;
     copyGenome->genoLinks = [[NSMutableArray alloc] initWithArray:self.genoLinks copyItems:YES];
     
     return copyGenome;
+}
+
+-(id) initWithCoder:(NSCoder*) coder {
+    self = [super init];
+    if (self) {
+        genomeID = [coder decodeIntForKey:@"genomeID"];
+        genomeCounter++;
+        
+        NSSet *nodeSet = [NSSet setWithArray:@[[NSMutableArray class],
+                                           [GenomeNode class]
+                                           ]];
+        genoNodes = [coder decodeObjectOfClasses:nodeSet forKey:@"genoNodes"];
+        
+        NSSet *linkSet = [NSSet setWithArray:@[[NSMutableArray class],
+                                               [GenomeLink class]
+                                               ]];
+        genoLinks = [coder decodeObjectOfClasses:linkSet forKey:@"genoLinks"];
+    }
+    return self;
+}
+
+-(void) encodeWithCoder:(NSCoder*) coder {
+    [coder encodeInt:genomeID forKey:@"genomeID"];
+    [coder encodeObject:genoNodes forKey:@"genoNodes"];
+    [coder encodeObject:genoLinks forKey:@"genoLinks"];
+}
+
++(BOOL) supportsSecureCoding {
+    return YES;
 }
 
 -(GenomeNode*) getNodeWithID: (int) nodeID {
@@ -134,18 +162,24 @@ static bool genesisOccurred = false;
     return self;
 }
 
--(void) printGenome {
-    for (int i = 0; i < [genoNodes count]; i++) {
-        GenomeNode* gn = [genoNodes objectAtIndex:i];
++(NSString*) printGenomeToString:(Genome*) genome {
+    NSMutableString* str = [[NSMutableString alloc] init];
+    
+    [str appendString:[NSString stringWithFormat:@"-- Genome (%i) --\n", genome.genomeID]];
+    for (int i = 0; i < [genome.genoNodes count]; i++) {
+        GenomeNode* gn = [genome.genoNodes objectAtIndex:i];
         NSString* nodeType = [GenomeNode NodeTypeString:gn.nodeType];
-        NSLog(@"Id: %d - %@", gn.nodeID, nodeType);
-        for(int l = 0; l < [genoLinks count]; l++) {
-            GenomeLink* gl = [genoLinks objectAtIndex:l];
-            if(gl.fromNode == gn.nodeID) {
-                NSLog(@"LinkId: %d (%@)- %d --[%1.3f]--> %d ", gl.linkID, (gl.isEnabled ? @"ON" : @"OFF"), gl.fromNode, gl.weight, gl.toNode);
+        [str appendString:[NSString stringWithFormat:@"NodeId: %d - %@\n", gn.nodeID, nodeType]];
+        
+        for(int l = 0; l < [genome.genoLinks count]; l++) {
+            GenomeLink* gl = [genome.genoLinks objectAtIndex:l];
+            if(gn.nodeID == gl.fromNode) {
+                [str appendString:[NSString stringWithFormat:@"\tLinkId: %d (%@)- %d --[%1.3f]--> %d\n", gl.linkID, (gl.isEnabled ? @"ON" : @"OFF"), gl.fromNode, gl.weight, gl.toNode]];
             }
         }
     }
+    [str appendString:@"-- End Genome --\n"];
+    return [NSString stringWithString:str];
 }
 
 -(void) dealloc {
@@ -338,14 +372,19 @@ double gaussrand() {
 -(Genome*) mutateGenome {
     if (genoNodes.count < [Parameters maximumNeurons] &&
         randomDouble() < [Parameters chanceAddNode]) {
+        NSLog(@"Genome :: mutateGenome :: addNode");
         [self addNode];
     } else if (randomDouble() < [Parameters chanceAddLink]) {
+        NSLog(@"Genome :: mutateGenome :: addLink");
         [self addLink];
     } else if (randomDouble() < [Parameters chanceMutateWeight]) {
+        NSLog(@"Genome :: mutateGenome :: perturbAllLinkWeights");
         [self perturbAllLinkWeights];
     } else if (randomDouble() < [Parameters chanceToggleLinks]) {
+        NSLog(@"Genome :: mutateGenome :: toggleRandomLink");
         [self toggleRandomLink];
     } else if (randomDouble() < [Parameters changeReenableLinks]) {
+        NSLog(@"Genome :: mutateGenome :: reEnableRandomLink");
         [self reEnableRandomLink];
     }
     return self;
@@ -547,6 +586,67 @@ double gaussrand() {
             [checkedInnovations addObject:nextLink];
         }
     }
+}
+
+-(BOOL) isEqual:(Genome*) genome {
+    if(genomeID != genome.genomeID) {
+        return FALSE;
+    }
+    
+    BOOL nodeSame = FALSE;
+    for(GenomeNode* gn1 in genoNodes) {
+        nodeSame = FALSE;
+        for(GenomeNode* gn2 in genome.genoNodes) {
+            if ([gn1 isEqual:gn2]) {
+                nodeSame = TRUE;
+                break;
+            }
+        }
+        if(!nodeSame) {
+            return FALSE;
+        }
+    }
+    
+    for(GenomeNode* gn1 in genome.genoNodes) {
+        nodeSame = FALSE;
+        for(GenomeNode* gn2 in genoNodes) {
+            if ([gn1 isEqual:gn2]) {
+                nodeSame = TRUE;
+                break;
+            }
+        }
+        if(!nodeSame) {
+            return FALSE;
+        }
+    }
+    
+    for(GenomeLink* gl1 in genoLinks) {
+        nodeSame = FALSE;
+        for(GenomeLink* gl2 in genome.genoLinks) {
+            if ([gl1 isEqual:gl2]) {
+                nodeSame = TRUE;
+                break;
+            }
+        }
+        if(!nodeSame) {
+            return FALSE;
+        }
+    }
+    
+    for(GenomeLink* gl1 in genome.genoLinks) {
+        nodeSame = FALSE;
+        for(GenomeLink* gl2 in genoLinks) {
+            if ([gl1 isEqual:gl2]) {
+                nodeSame = TRUE;
+                break;
+            }
+        }
+        if(!nodeSame) {
+            return FALSE;
+        }
+    }
+    
+    return TRUE;
 }
 
 @end

@@ -12,21 +12,44 @@
 #import "Network.h"
 
 @implementation Organism
-@synthesize network, genome, fitness, speciesAdjustedFitness;
+@synthesize network, genome, generation, fitness, speciesAdjustedFitness;
 
 -(NSString*) description {
     return [NSString stringWithFormat: @"Organism with fitness: %1.3f", fitness];
 }
 
-- (id)initWithGenome: (Genome*) dna
+-(id) initWithGenome: (Genome*) dna
 {
     self = [super init];
     if (self) {
         genome = dna;
+        generation = 0;
         fitness = 0;
         speciesAdjustedFitness = 0;
     }
     return self;
+}
+
+-(id) initWithCoder:(NSCoder*) coder {
+    self = [super init];
+    if (self) {
+        generation = [coder decodeIntForKey:@"generation"];
+        fitness = [coder decodeDoubleForKey:@"fitness"];
+        speciesAdjustedFitness = [coder decodeDoubleForKey:@"speciesAdjustedFitness"];
+        genome = [coder decodeObjectOfClass:[Genome class] forKey:@"genome"];
+    }
+    return self;
+}
+
+-(void) encodeWithCoder:(NSCoder*) coder {
+    [coder encodeInt:generation forKey:@"generation"];
+    [coder encodeDouble:fitness forKey:@"fitness"];
+    [coder encodeDouble:speciesAdjustedFitness forKey:@"speciesAdjustedFitness"];
+    [coder encodeObject:genome forKey:@"genome"];
+}
+
++(BOOL) supportsSecureCoding {
+    return YES;
 }
 
 -(void) developNetwork {
@@ -40,12 +63,42 @@
     return [network activateNetwork];
 }
 
--(void) printOganism {
-    NSLog(@"======= Organism =======");
-    NSLog(@"Fitness: %f", fitness);
-    [genome printGenome];
-    NSLog(@"===========================");
-    NSLog(@" ");
++(void) printToFile:(Organism*) organism filename: (NSString*) filename {
+    NSMutableString* str = [[NSMutableString alloc] init];
+    [str appendString:@"======= Organism =======\n"];
+    [str appendString:[NSString stringWithFormat:@"Generation: %i\n", organism.generation]];
+    [str appendString:[NSString stringWithFormat:@"Fitness: %f\n", organism.fitness]];
+    [str appendString:[NSString stringWithFormat:@"SpeciesAdjustedFitness: %f\n", organism.speciesAdjustedFitness]];
+    [str appendString:[Genome printGenomeToString:organism.genome]];
+    [str appendString:@"========================\n"];
+    
+    //NSString* filename = [NSString stringWithFormat:@"/Users/murphycrosby/Misc/Images/org-gen-%d.txt", generation];
+    [str writeToFile:filename atomically:YES encoding:NSUTF8StringEncoding error:nil];
+}
+
++(void) saveToFile: (Organism*) organism filename: (NSString*) filename {
+    NSError* error;
+    NSData* data = [NSKeyedArchiver archivedDataWithRootObject:organism requiringSecureCoding:YES error:&error];
+    
+    if(error != nil) {
+        NSLog(@"%@", [error debugDescription]);
+        return;
+    }
+    //NSString* filename = [NSString stringWithFormat:@"/Users/murphycrosby/Misc/Images/org-gen-%d.bin", generation];
+    [data writeToFile:filename atomically:YES];
+}
+
++(Organism*) loadFromFile:(NSString*) filename {
+    //NSString* filename = [NSString stringWithFormat:@"/Users/murphycrosby/Misc/Images/org-gen-%d.bin", generation];
+    NSData* data = [NSData dataWithContentsOfFile:filename];
+    NSError* error;
+    
+    Organism* organism = [NSKeyedUnarchiver unarchivedObjectOfClass:[Organism class] fromData:data error:&error];
+    if(error != nil) {
+        NSLog(@"%@", [error debugDescription]);
+        return nil;
+    }
+    return organism;
 }
 
 -(void) destroyNetwork {
@@ -76,9 +129,26 @@
     return NSOrderedAscending;
 }
 
+-(BOOL) isEqual:(Organism*) organism {
+    if(fitness != organism.fitness) {
+        return FALSE;
+    }
+    
+    if(speciesAdjustedFitness != organism.speciesAdjustedFitness) {
+        return FALSE;
+    }
+    
+    if (![genome isEqual:organism.genome]) {
+        return FALSE;
+    }
+    
+    return TRUE;
+}
+
 -(Organism*) copyWithZone: (NSZone*) zone {
     Organism* copiedOrganism = [[Organism alloc] init];
     copiedOrganism.genome = [genome copy];
+    copiedOrganism.generation = generation;
     copiedOrganism.fitness = fitness;
     return copiedOrganism;
 }

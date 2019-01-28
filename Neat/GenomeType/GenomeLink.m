@@ -56,4 +56,57 @@
     return copiedGenoLink;
 }
 
+-(id) initWithCoder:(NSCoder*) coder {
+    self = [super init];
+    if (self) {
+        linkID = [coder decodeIntForKey:@"linkID"];
+        fromNode = [coder decodeIntForKey:@"fromNode"];
+        toNode = [coder decodeIntForKey:@"toNode"];
+        weight = [coder decodeDoubleForKey:@"weight"];
+        isEnabled = [coder decodeBoolForKey:@"isEnabled"];
+        
+        if(![[InnovationDb sharedDb] linkExists:fromNode toNode:toNode]) {
+            [[InnovationDb sharedDb] insertNewLink:self fromNode:fromNode toNode:toNode];
+            [InnovationDb setNextInnovationID: linkID];
+        }
+    }
+    return self;
+}
+
+-(void) encodeWithCoder:(NSCoder*) coder {
+    [coder encodeInt:linkID forKey:@"linkID"];
+    [coder encodeInt:fromNode forKey:@"fromNode"];
+    [coder encodeInt:toNode forKey:@"toNode"];
+    [coder encodeDouble:weight forKey:@"weight"];
+    [coder encodeBool:isEnabled forKey:@"isEnabled"];
+}
+
++(BOOL) supportsSecureCoding {
+    return YES;
+}
+
+-(BOOL) isEqual:(GenomeLink*) link {
+    if(linkID != link.linkID) {
+        return FALSE;
+    }
+    
+    if(fromNode != link.fromNode) {
+        return FALSE;
+    }
+    
+    if(toNode != link.toNode) {
+        return FALSE;
+    }
+    
+    if(weight != link.weight) {
+        return FALSE;
+    }
+    
+    if(isEnabled != link.isEnabled) {
+        return FALSE;
+    }
+    
+    return TRUE;
+}
+
 @end

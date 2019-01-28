@@ -126,30 +126,75 @@
             [nextPhenoNode activate];
         }
     }
+    /*
+    NSMutableArray* debugArray = [[NSMutableArray alloc] init];
+    for (PhenomeNode* nextPhenoNode in allNodes) {
+        if(nextPhenoNode.nodeType == OUTPUT) {
+            [debugArray addObject:@(nextPhenoNode.activationValue)];
+        }
+    }
+    NSLog(@"[%1.3f] [%1.3f] [%1.3f] [%1.3f]", [debugArray[0] doubleValue], [debugArray[1] doubleValue], [debugArray[2] doubleValue], [debugArray[3] doubleValue]);
+    */
+    [Network fscale:allNodes max:-50 min:50];
     return [Network fsoftmax: allNodes];
 }
 
 -(void) flushNetwork {
     for (PhenomeNode* nextPhenoNode in allNodes) {
         nextPhenoNode.activationValue = 0;
-        //nextPhenoNode.lastActivationValue = 0;
         nextPhenoNode.activated = FALSE;
     }
 }
+
++(void) fscale: (NSArray*) nodes max:(int) max min:(int) min {
+    double vmin = 0;
+    double vmax = 0;
+    BOOL doScale = FALSE;
+    
+    for (PhenomeNode* nextPhenoNode in nodes) {
+        if(nextPhenoNode.nodeType != OUTPUT) {
+            continue;
+        }
+        
+        if(nextPhenoNode.activationValue > max
+           || nextPhenoNode.activationValue < min) {
+            doScale = TRUE;
+        }
+        
+        if(nextPhenoNode.activationValue < vmin) {
+            vmin = nextPhenoNode.activationValue;
+        }
+        
+        if(nextPhenoNode.activationValue > vmax) {
+            vmax = nextPhenoNode.activationValue;
+        }
+    }
+    
+    if(!doScale) {
+        return;
+    }
+    
+    double mult = ((max - min) / (vmax - vmin));
+    for (PhenomeNode* nextPhenoNode in nodes) {
+        double val = (mult * (nextPhenoNode.activationValue - vmax)) + max;
+        nextPhenoNode.activationValue = val;
+    }
+}
+
 
 +(NSArray*) fsoftmax: (NSArray*) nodes {
     NSMutableArray* outputArray = [[NSMutableArray alloc] init];
     double sum = 0.0;
     for (PhenomeNode* nextPhenoNode in nodes) {
         if(nextPhenoNode.nodeType == OUTPUT) {
-            double exp = expf(nextPhenoNode.activationValue);
-            sum += exp;
+            double ex = exp(nextPhenoNode.activationValue);
+            sum += ex;
         }
     }
     
     for (PhenomeNode* nextPhenoNode in nodes) {
         if(nextPhenoNode.nodeType == OUTPUT) {
-            double val = expf(nextPhenoNode.activationValue) / sum;
+            double val = exp(nextPhenoNode.activationValue) / sum;
             nextPhenoNode.activationValue = val;
             [outputArray addObject:@(val)];
         }

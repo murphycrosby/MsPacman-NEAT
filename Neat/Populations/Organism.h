@@ -13,7 +13,7 @@
 @class Genome;
 @class Network;
 
-@interface Organism : NSObject {
+@interface Organism : NSObject <NSCopying, NSSecureCoding> {
     //Genome* genome;
     //Network* network;
     
@@ -23,6 +23,7 @@
 
 @property (retain) Network* network;
 @property (retain) Genome* genome;
+@property int generation;
 @property double fitness;
 @property double speciesAdjustedFitness;
 
@@ -30,11 +31,14 @@
 -(id)initWithGenome: (Genome*) dna;
 -(void) developNetwork;
 -(NSArray*) predict: (NSArray*) inputValuesArray;
--(void) printOganism;
++(void) printToFile: (Organism*) organism filename: (NSString*) filename;
++(void) saveToFile: (Organism*) organism filename: (NSString*) filename;
++(Organism*) loadFromFile: (NSString*) filename;
 -(void) destroyNetwork;
 -(Organism*) reproduceChildOrganism;
 -(Organism*) reproduceChildOrganismWithOrganism: (Organism*) lessFitMate;
 -(NSComparisonResult) compareFitnessWith: (Organism*) anotherOrganism;
+-(BOOL) isEqual:(Organism*) organism;
 
 @end
 

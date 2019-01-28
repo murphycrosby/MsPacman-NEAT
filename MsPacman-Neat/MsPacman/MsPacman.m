@@ -12,6 +12,10 @@
 @implementation MsPacman
 
 @synthesize msPacman;
+@synthesize canGoUp;
+@synthesize canGoRight;
+@synthesize canGoDown;
+@synthesize canGoLeft;
 @synthesize blinky;
 @synthesize pinky;
 @synthesize inky;
@@ -358,7 +362,7 @@
     CGImageRef playzone = CGImageCreateWithImageInRect(screenshot, rect);
     
     //if(logLevel >= 3) {
-        [self saveScreenshot:playzone filename:@"input_values_playzone-" number:@"0"];
+        //[self saveScreenshot:playzone filename:@"input_values_playzone-" number:@"0"];
     //}
     
     size_t width = CGImageGetWidth(playzone);
@@ -436,10 +440,11 @@
     if (data) { free(data); }
     CGImageRelease(playzone);
     
-    BOOL canGoUp = FALSE;
-    BOOL canGoRight = FALSE;
-    BOOL canGoDown = FALSE;
-    BOOL canGoLeft = FALSE;
+    canGoUp = FALSE;
+    canGoRight = FALSE;
+    canGoDown = FALSE;
+    canGoLeft = FALSE;
+    
     if(logLevel >= 3) {
         NSLog(@"===== MsPacman =====");
     }

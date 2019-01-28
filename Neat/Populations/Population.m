@@ -34,6 +34,21 @@
             generation, (unsigned long)[allOrganisms count],fittestOrganismEver.fitness, [allSpecies description]];
 }
 
+-(Organism*) bestFitness {
+    Organism* org = nil;
+    for (Organism* nextOrganism in allOrganisms) {
+        if(org == nil) {
+            org = nextOrganism;
+            continue;
+        }
+        if(nextOrganism.fitness > org.fitness) {
+            org = nextOrganism;
+        }
+    }
+    
+    return org;
+}
+
 -(void) evolvePopulation {
     // go through each species, purge then sort by fitness
     NSMutableArray* speciesToDestroy = [[NSMutableArray alloc] init];
@@ -112,10 +127,13 @@
     generation++;
 }
 
-+(Population*) spawnInitialGenerationFromGenome:(Genome*) genesisGenome {
++(Population*) spawnInitialGenerationFromGenome:(Genome*) genesisGenome generation:(int) generation fitness:(double) fitness {
     Population* newPopulation = [[Population alloc] init];
+    newPopulation.generation = generation;
     
     Organism* firstLife = [[Organism alloc] initWithGenome: genesisGenome];
+    firstLife.fitness = fitness;
+    
     [newPopulation.allOrganisms addObject:firstLife];
     
     int nOrganisms = [Parameters populationSize] - 1;

@@ -29,9 +29,7 @@
 @property (retain) NSMutableArray* incomingPhenoLinks;
 @property (retain) NSMutableArray* outgoingPhenoLinks;
 @property double activationValue;
-//@property double lastActivationValue;
 @property BOOL activated;
-//@property bool hasChangedSinceLastTraversal;
 
 -(void) activate;
 -(void) clearLinks;

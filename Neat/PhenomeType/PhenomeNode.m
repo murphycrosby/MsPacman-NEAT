@@ -64,10 +64,16 @@
             */
         }
     }
-    //NSLog(@"activationValue B: %1.3f :  %1.3f", activationValue, activeSum);
-    activationValue += [PhenomeNode fsigmoid: activeSum slope:0 constant:0];
-    //NSLog(@"activationValue A: %1.3f", activationValue);
-    //activationValue += activeSum;
+    
+    if (nodeType == OUTPUT) {
+        //We SOFTMAX the last layer
+        activationValue += activeSum;
+    } else {
+        //NSLog(@"activationValue B: %1.3f :  %1.3f", activationValue, activeSum);
+        activationValue += [PhenomeNode fsigmoid: activeSum slope:0 constant:0];
+        //NSLog(@"activationValue A: %1.3f", activationValue);
+    }
+    
     activated = TRUE;
     
     for(PhenoLink* outgoingLink in outgoingPhenoLinks) {

@@ -25,8 +25,8 @@
 @property int generation;
 
 -(void) evolvePopulation;
-
-+(Population*) spawnInitialGenerationFromGenome: (Genome*) genesisGenome;
+-(Organism*) bestFitness;
++(Population*) spawnInitialGenerationFromGenome: (Genome*) genesisGenome generation:(int) generation fitness:(double) fitness;
 
 @end
 

@@ -25,6 +25,10 @@
 }
 
 @property (nonatomic, assign) CGRect msPacman;
+@property (nonatomic, assign) BOOL canGoUp;
+@property (nonatomic, assign) BOOL canGoRight;
+@property (nonatomic, assign) BOOL canGoDown;
+@property (nonatomic, assign) BOOL canGoLeft;
 @property (nonatomic, assign) CGRect blinky;
 @property (nonatomic, assign) CGRect pinky;
 @property (nonatomic, assign) CGRect inky;

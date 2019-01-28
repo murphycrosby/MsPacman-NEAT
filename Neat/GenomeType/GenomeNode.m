@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "GenomeNode.h"
+#import "InnovationDb.h"
 
 @implementation GenomeNode
 
@@ -41,6 +42,41 @@
     copiedGenoNode.nodeType = nodeType;
     copiedGenoNode.nodePosition = nodePosition;
     return copiedGenoNode;
+}
+
+-(id) initWithCoder:(NSCoder*) coder {
+    self = [super init];
+    if (self) {
+        nodeID = [coder decodeIntForKey:@"nodeID"];
+        nodeType = [coder decodeIntForKey:@"nodeType"];
+        
+        if(![[InnovationDb sharedDb] nodeExists: nodeID]) {
+            [[InnovationDb sharedDb] insertNewNode:self fromNode:0 toNode:0];
+            [InnovationDb setNextGenomeNodeID:nodeID];
+        }
+    }
+    return self;
+}
+
+-(void) encodeWithCoder:(NSCoder*) coder {
+    [coder encodeInt:nodeID forKey:@"nodeID"];
+    [coder encodeInt:nodeType forKey:@"nodeType"];
+}
+
++(BOOL) supportsSecureCoding {
+    return YES;
+}
+
+-(BOOL) isEqual:(GenomeNode*) node {
+    if(nodeID != node.nodeID) {
+        return FALSE;
+    }
+    
+    if (nodeType != node.nodeType) {
+        return FALSE;
+    }
+    
+    return TRUE;
 }
 
 +(NSString*) NodeTypeString: (NodeType) nodeType {

@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 //@class ONNetwork;
 
-@interface Genome : NSObject<NSCopying> {
+@interface Genome : NSObject<NSCopying, NSSecureCoding> {
     //int genomeID;
     //NSMutableArray* genoNodes;
     //NSMutableArray* genoLinks;
@@ -23,7 +23,7 @@
 @property (retain) NSMutableArray* genoLinks;
 
 +(Genome*) createGenome: (int) nInputs outputs: (int) nOutputs;
--(void) printGenome;
++(NSString*) printGenomeToString:(Genome*) genome;
 -(Genome*) randomiseWeights;
 -(void) perturbSingleLinkWeight;
 -(void) perturbAllLinkWeights;
@@ -35,6 +35,7 @@
 -(Genome*) offspringWithGenome: (Genome*) mumGenome;
 -(void) verifyGenome;
 -(double) similarityScoreWithGenome: (Genome*) otherGenome;
+-(BOOL) isEqual:(Genome*) genome;
 //-(double) gaussrand;
 
 @end
