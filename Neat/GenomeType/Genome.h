@@ -23,7 +23,8 @@
 @property (retain) NSMutableArray* genoLinks;
 
 +(Genome*) createGenome: (int) nInputs outputs: (int) nOutputs;
-+(NSString*) printGenomeToString:(Genome*) genome;
++(void) balanceGenome:(Genome*) genome;
++(NSString*) saveGenomeToSvg:(Genome*) genome;
 -(Genome*) randomiseWeights;
 -(void) perturbSingleLinkWeight;
 -(void) perturbAllLinkWeights;
@@ -36,7 +37,7 @@
 -(void) verifyGenome;
 -(double) similarityScoreWithGenome: (Genome*) otherGenome;
 -(BOOL) isEqual:(Genome*) genome;
-//-(double) gaussrand;
++(double) gaussrand;
 
 @end
 

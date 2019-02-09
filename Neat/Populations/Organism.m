@@ -12,7 +12,7 @@
 #import "Network.h"
 
 @implementation Organism
-@synthesize network, genome, generation, fitness, speciesAdjustedFitness;
+@synthesize network, genome, fitness, speciesAdjustedFitness;
 
 -(NSString*) description {
     return [NSString stringWithFormat: @"Organism with fitness: %1.3f", fitness];
@@ -23,7 +23,6 @@
     self = [super init];
     if (self) {
         genome = dna;
-        generation = 0;
         fitness = 0;
         speciesAdjustedFitness = 0;
     }
@@ -33,7 +32,6 @@
 -(id) initWithCoder:(NSCoder*) coder {
     self = [super init];
     if (self) {
-        generation = [coder decodeIntForKey:@"generation"];
         fitness = [coder decodeDoubleForKey:@"fitness"];
         speciesAdjustedFitness = [coder decodeDoubleForKey:@"speciesAdjustedFitness"];
         genome = [coder decodeObjectOfClass:[Genome class] forKey:@"genome"];
@@ -42,7 +40,6 @@
 }
 
 -(void) encodeWithCoder:(NSCoder*) coder {
-    [coder encodeInt:generation forKey:@"generation"];
     [coder encodeDouble:fitness forKey:@"fitness"];
     [coder encodeDouble:speciesAdjustedFitness forKey:@"speciesAdjustedFitness"];
     [coder encodeObject:genome forKey:@"genome"];
@@ -63,17 +60,64 @@
     return [network activateNetwork];
 }
 
-+(void) printToFile:(Organism*) organism filename: (NSString*) filename {
-    NSMutableString* str = [[NSMutableString alloc] init];
-    [str appendString:@"======= Organism =======\n"];
-    [str appendString:[NSString stringWithFormat:@"Generation: %i\n", organism.generation]];
-    [str appendString:[NSString stringWithFormat:@"Fitness: %f\n", organism.fitness]];
-    [str appendString:[NSString stringWithFormat:@"SpeciesAdjustedFitness: %f\n", organism.speciesAdjustedFitness]];
-    [str appendString:[Genome printGenomeToString:organism.genome]];
-    [str appendString:@"========================\n"];
++(void) saveToHtml: (Organism*) organism directory: (NSString*) directory organismId: (NSString*) organismId {
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    NSError* error;
     
-    //NSString* filename = [NSString stringWithFormat:@"/Users/murphycrosby/Misc/Images/org-gen-%d.txt", generation];
-    [str writeToFile:filename atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    NSString* newDirectory = [NSString stringWithFormat:@"%@", directory];
+    
+    if (![fileManager fileExistsAtPath:newDirectory]) {
+        [fileManager createDirectoryAtPath:newDirectory withIntermediateDirectories:TRUE attributes:nil error:&error];
+        if(error != nil) {
+            NSLog(@"%@", [error debugDescription]);
+            return;
+        }
+    }
+    
+    NSMutableString* str = [[NSMutableString alloc] init];
+    [str appendString:@"<html>\n"];
+    [str appendString:@"\t<head>\n"];
+    [str appendString:@"\t\t<title>Organism</title>\n"];
+    [str appendString:@"\t\t<style>\n"];
+    [str appendString:@"\t\t\t.invisible { visibility: hidden; }\n"];
+    [str appendString:@"\t\t</style>\n"];
+    [str appendString:@"\t\t<script src=\"https://code.jquery.com/jquery-3.3.1.min.js\" integrity=\"sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=\" crossorigin=\"anonymous\"></script>\n"];
+    [str appendString:@"\t\t<script type=\"text/javascript\">\n"];
+    [str appendString:@"\t\t\tfunction click(el) {\n"];
+    [str appendString:@"\t\t\t\tid = el.getAttribute(\"id\");\n"];
+    
+    [str appendString:@"\t\t\t\t$('path[id^=\"line-'+id+'-\"').each(function() {\n"];
+    [str appendString:@"\t\t\t\t\t$(this).toggleClass(\"invisible\");\n"];
+    [str appendString:@"\t\t\t\t});\n"];
+    
+    [str appendString:@"\t\t\t\t$('text[id^=\"text-'+id+'-\"').each(function() {\n"];
+    [str appendString:@"\t\t\t\t\t$(this).toggleClass(\"invisible\");\n"];
+    [str appendString:@"\t\t\t\t});\n"];
+    
+    [str appendString:@"\t\t\t\t$('path[id$=\"-'+id+'\"').each(function() {\n"];
+    [str appendString:@"\t\t\t\t\t$(this).toggleClass(\"invisible\");\n"];
+    [str appendString:@"\t\t\t\t});\n"];
+    
+    [str appendString:@"\t\t\t\t$('text[id$=\"-'+id+'\"').each(function() {\n"];
+    [str appendString:@"\t\t\t\t\t$(this).toggleClass(\"invisible\");\n"];
+    [str appendString:@"\t\t\t\t});\n"];
+    
+    [str appendString:@"\t\t\t}\n"];
+    [str appendString:@"\t\t</script>\n"];
+    [str appendString:@"\t</head>\n"];
+    [str appendString:@"\t<body style=\"font-family:'Verdana'\">\n"];
+    [str appendString:[NSString stringWithFormat:@"\t\t<div>Fitness: %1.0f</div>\n", organism.fitness]];
+    [str appendString:[NSString stringWithFormat:@"\t\t<div>Species Adjusted Fitness: %1.3f</div>\n", organism.speciesAdjustedFitness]];
+    
+    [str appendString:@"\t<div style=\"width: 100%; height: 650px; overflow-y: scroll;\">\n"];
+    [str appendString:[Genome saveGenomeToSvg:organism.genome]];
+    [str appendString:@"\t</div>\n"];
+    
+    [str appendString:@"\t</body>\n"];
+    [str appendString:@"</html>\n"];
+    
+    NSString* html = [NSString stringWithFormat:@"%@/organism-%@.html", newDirectory, organismId];
+    [str writeToFile:html atomically:YES encoding:NSUTF8StringEncoding error:nil];
 }
 
 +(void) saveToFile: (Organism*) organism filename: (NSString*) filename {
@@ -84,12 +128,16 @@
         NSLog(@"%@", [error debugDescription]);
         return;
     }
-    //NSString* filename = [NSString stringWithFormat:@"/Users/murphycrosby/Misc/Images/org-gen-%d.bin", generation];
     [data writeToFile:filename atomically:YES];
 }
 
 +(Organism*) loadFromFile:(NSString*) filename {
-    //NSString* filename = [NSString stringWithFormat:@"/Users/murphycrosby/Misc/Images/org-gen-%d.bin", generation];
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    
+    if (![fileManager fileExistsAtPath:filename]) {
+        return nil;
+    }
+    
     NSData* data = [NSData dataWithContentsOfFile:filename];
     NSError* error;
     
@@ -148,7 +196,6 @@
 -(Organism*) copyWithZone: (NSZone*) zone {
     Organism* copiedOrganism = [[Organism alloc] init];
     copiedOrganism.genome = [genome copy];
-    copiedOrganism.generation = generation;
     copiedOrganism.fitness = fitness;
     return copiedOrganism;
 }

@@ -14,24 +14,18 @@
 @class Network;
 
 @interface Organism : NSObject <NSCopying, NSSecureCoding> {
-    //Genome* genome;
-    //Network* network;
     
-    //double fitness;
-    //double speciesAdjustedFitness;
 }
 
 @property (retain) Network* network;
 @property (retain) Genome* genome;
-@property int generation;
 @property double fitness;
 @property double speciesAdjustedFitness;
 
-//-(Network*) network;
 -(id)initWithGenome: (Genome*) dna;
 -(void) developNetwork;
 -(NSArray*) predict: (NSArray*) inputValuesArray;
-+(void) printToFile: (Organism*) organism filename: (NSString*) filename;
++(void) saveToHtml: (Organism*) organism directory: (NSString*) directory organismId: (NSString*) organismId;
 +(void) saveToFile: (Organism*) organism filename: (NSString*) filename;
 +(Organism*) loadFromFile: (NSString*) filename;
 -(void) destroyNetwork;

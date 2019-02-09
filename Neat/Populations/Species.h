@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 @class Organism;
 
-@interface Species : NSObject {
+@interface Species : NSObject <NSSecureCoding> {
     int speciesID;
     //NSMutableArray* speciesOrganisms;
     //Organism* fittestOrganism;
@@ -32,9 +32,7 @@
 -(NSArray*) spawnOrganisms: (int) numToSpawn;
 -(double) numberToSpawnBasedOnAverageFitness: (double) averageFitness;
 -(NSComparisonResult) compareBestFitnessWith: (Species*) anotherSpecies;
-/*
--(Organism*) fittestOrganism;
-*/
++(void) saveToHtml: (Species*) species directory: (NSString*) directory speciesId: (NSString*) speciesId;
 
 @end
 

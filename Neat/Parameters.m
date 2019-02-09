@@ -11,8 +11,9 @@
 
 @implementation Parameters
 
-static int populationSize = 10;
-static int numGenerations = 100;
+static int populationSize = 25;
+static int numGenerations = 4;
+static double mutationProbabilityUpdateWeight = 0.4;
 static double mutationProbabilityReplaceWeight = 0.2;
 static double mutationMaximumPerturbation = 0.05;
 static double chanceMutateWeight = 0.5;
@@ -42,6 +43,10 @@ static int randomSeed = 0;
 
 +(int) numGenerations {
     return numGenerations;
+}
+
++(double) mutationProbabilityUpdateWeight {
+    return mutationProbabilityUpdateWeight;
 }
 
 +(double) mutationProbabilityReplaceWeight {

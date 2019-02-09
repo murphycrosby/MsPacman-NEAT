@@ -35,7 +35,8 @@
 -(NSArray*) activateNetwork;
 -(void) flushNetwork;
 
-+(void) fscale: (NSArray*) nodes max:(int) max min:(int) min;
++(void) fscalePhenoNode: (NSArray*) nodes min:(int) min max:(int) max;
++(NSArray*) fscale: (NSArray*) nodes min:(int) min max:(int) max;
 +(NSArray*) fsoftmax:(NSArray*) nodes;
 
 @end

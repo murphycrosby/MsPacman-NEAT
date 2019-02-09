@@ -252,6 +252,34 @@
     return items >= 3;
 }
 
+-(long) getPelletsEaten: (CGImageRef) screenshot {
+    long pelletsEaten = 0;
+    
+    CGRect rect = CGRectMake(185, 185, 865, 695);
+    CGImageRef playzone = CGImageCreateWithImageInRect(screenshot, rect);
+    size_t width = CGImageGetWidth(playzone);
+    
+    unsigned char* data = [self getArrayFromImage:playzone];
+    
+    for(int c = 0; c < [lvl1.level1Pellets count]; c++) {
+        CGRect rect = [[lvl1.level1Pellets objectAtIndex:c] rectValue];
+        int x = CGRectGetMidX(rect);
+        int y = CGRectGetMidY(rect);
+        
+        int offset = 4 * ((width * y) + round(x));
+        int red   = data[offset + 1];
+        int green = data[offset + 2];
+        int blue  = data[offset + 3];
+        
+        //Pellet - [0][167][255]
+        if (red != 0 || green != 167 || blue != 255) {
+            pelletsEaten++;
+        }
+    }
+    
+    return pelletsEaten;
+}
+
 -(long) getScore: (CGImageRef) screenshot {
     size_t width;
     size_t height;
@@ -356,6 +384,11 @@
 }
 
 -(NSMutableArray*) getInputValues: (CGImageRef) screenshot {
+    //int expectedInputCount = 366;
+    //int history = 4;
+    int expectedInputCount = 40;
+    int history = 1;
+    
     NSMutableArray* nsa = [[NSMutableArray alloc] init];
     
     CGRect rect = CGRectMake(185, 185, 865, 695);
@@ -463,6 +496,7 @@
                 NSArray* rects = [lvl1.level1Rects objectForKey:[NSString stringWithFormat:@"%d",row]];
                 for (int r = 0; r < [rects count]; r++) {
                     CGRect play = [[rects objectAtIndex:r] rectValue];
+                    //CGRectContainsPoint(rect, point)
                     if(CGRectContainsRect(play, up)) {
                         canGoUp = TRUE;
                     }
@@ -479,7 +513,7 @@
             }
             
             [msPacmanHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
-            [msPacmanHistory removeObjectAtIndex:4];
+            [msPacmanHistory removeObjectAtIndex:history];
             
             if(logLevel >= 3) {
                 NSLog(@"%d.  %d,%d,%d,%d w:%d h:%d", ms,
@@ -492,7 +526,7 @@
             break;
         }
     }
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < history; i++) {
         CGRect h = [[msPacmanHistory objectAtIndex:i] rectValue];
         if(logLevel >= 3) {
             NSLog(@"History: %d.  %d,%d,%d,%d w:%d h:%d", i,
@@ -503,8 +537,12 @@
         }
         [nsa addObject:[NSNumber numberWithInt:h.origin.x]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.height]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
         //NSLog(@"MsPacman History: %d, %d, %d, %d", (int)h.origin.x,(int)h.origin.y,(int)h.size.width,(int)h.size.height);
     }
     [nsa addObject:[NSNumber numberWithInt:canGoUp]];
@@ -527,7 +565,7 @@
                 blinky = rect;
             }
             [blinkyHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
-            [blinkyHistory removeObjectAtIndex:4];
+            [blinkyHistory removeObjectAtIndex:history];
             if(logLevel >= 3) {
                 NSLog(@"%d.  %d,%d,%d,%d w:%d h:%d", ms,
                       (int)rect.origin.x, (int)rect.origin.y,
@@ -544,7 +582,7 @@
         [blinkyHistory insertObject:[NSValue valueWithRect:CGRectZero] atIndex:0];
         [blinkyHistory removeObjectAtIndex:4];
     }
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < history; i++) {
         CGRect h = [[blinkyHistory objectAtIndex:i] rectValue];
         if(logLevel >= 3) {
             NSLog(@"History: %d.  %d,%d,%d,%d w:%d h:%d", i,
@@ -555,8 +593,12 @@
         }
         [nsa addObject:[NSNumber numberWithInt:h.origin.x]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.height]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
     }
     if(logLevel >= 3) {
         NSLog(@"====================");
@@ -573,7 +615,7 @@
                 pinky = rect;
             }
             [pinkyHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
-            [pinkyHistory removeObjectAtIndex:4];
+            [pinkyHistory removeObjectAtIndex:history];
             
             if(logLevel >= 3) {
                 NSLog(@"%d.  %d,%d,%d,%d w:%d h:%d", ms,
@@ -585,7 +627,7 @@
             break;
         }
     }
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < history; i++) {
         CGRect h = [[pinkyHistory objectAtIndex:i] rectValue];
         if(logLevel >= 3) {
             NSLog(@"History: %d.  %d,%d,%d,%d w:%d h:%d", i,
@@ -596,8 +638,12 @@
         }
         [nsa addObject:[NSNumber numberWithInt:h.origin.x]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.height]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
     }
     if(logLevel >= 3) {
         NSLog(@"====================");
@@ -614,7 +660,7 @@
                 inky = rect;
             }
             [inkyHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
-            [inkyHistory removeObjectAtIndex:4];
+            [inkyHistory removeObjectAtIndex:history];
             
             if(logLevel >= 3) {
                 NSLog(@"%d.  %d,%d,%d,%d w:%d h:%d", ms,
@@ -626,7 +672,7 @@
             break;
         }
     }
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < history; i++) {
         CGRect h = [[inkyHistory objectAtIndex:i] rectValue];
         if(logLevel >= 3) {
             NSLog(@"History: %d.  %d,%d,%d,%d w:%d h:%d", i,
@@ -637,8 +683,12 @@
         }
         [nsa addObject:[NSNumber numberWithInt:h.origin.x]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.height]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
     }
     if(logLevel >= 3) {
         NSLog(@"====================");
@@ -655,7 +705,7 @@
                 sue = rect;
             }
             [sueHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
-            [sueHistory removeObjectAtIndex:4];
+            [sueHistory removeObjectAtIndex:history];
             
             if(logLevel >= 3) {
                 NSLog(@"%d.  %d,%d,%d,%d w:%d h:%d", ms,
@@ -667,7 +717,7 @@
             break;
         }
     }
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < history; i++) {
         CGRect h = [[sueHistory objectAtIndex:i] rectValue];
         if(logLevel >= 3) {
             NSLog(@"History: %d.  %d,%d,%d,%d w:%d h:%d", i,
@@ -678,8 +728,12 @@
         }
         [nsa addObject:[NSNumber numberWithInt:h.origin.x]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.height]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
     }
     if(logLevel >= 3) {
         NSLog(@"====================");
@@ -693,7 +747,7 @@
         CGRect rect = [[scared_blue_array objectAtIndex:ms] rectValue];
         if(rect.size.width >= 30 && rect.size.height >= 30) {
             [scaredGhostHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
-            [scaredGhostHistory removeObjectAtIndex:16];
+            [scaredGhostHistory removeObjectAtIndex:(history * 4)];
             
             if(logLevel >= 3) {
                 NSLog(@"%d.  %d,%d,%d,%d w:%d h:%d", ms,
@@ -716,7 +770,7 @@
         CGRect rect = [[scared_gray_array objectAtIndex:ms] rectValue];
         if(rect.size.width >= 30 && rect.size.height >= 30) {
             [scaredGhostHistory insertObject:[NSValue valueWithRect:rect] atIndex:0];
-            [scaredGhostHistory removeObjectAtIndex:16];
+            [scaredGhostHistory removeObjectAtIndex:(history * 4)];
             
             if(logLevel >= 3) {
                 NSLog(@"%d.  %d,%d,%d,%d w:%d h:%d", ms,
@@ -735,7 +789,7 @@
     if(logLevel >= 3) {
         NSLog(@"===== Ghosts =====");
     }
-    for(int i = 0; i < 16; i++) {
+    for(int i = 0; i < (history * 4); i++) {
         CGRect h = [[scaredGhostHistory objectAtIndex:i] rectValue];
         if(logLevel >= 3) {
             NSLog(@"History: %d.  %d,%d,%d,%d w:%d h:%d", i,
@@ -746,14 +800,18 @@
         }
         [nsa addObject:[NSNumber numberWithInt:h.origin.x]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        [nsa addObject:[NSNumber numberWithInt:h.size.height]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
+        [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
+        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
+        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
     }
     if(logLevel >= 3) {
         NSLog(@"====================");
         NSLog(@" ");
     }
-    
+    /*
     for(int c = 0; c < [lvl1.level1Pellets count]; c++) {
         CGRect rect = [[lvl1.level1Pellets objectAtIndex:c] rectValue];
         int x = CGRectGetMidX(rect);
@@ -766,22 +824,22 @@
         
         //Pellet - [0][167][255]
         if (red == 0 && green == 167 && blue == 255) {
-            //Pellet found
             [nsa addObject:[NSNumber numberWithInt:1]];
         } else {
             [nsa addObject:[NSNumber numberWithInt:0]];
         }
     }
+    */
     
-    if([nsa count] < 366 && logLevel >= 2) {
-        NSLog(@"MsPacman :: getInputValues :: input values is less than expected: %lu", (unsigned long)[nsa count]);
+    if([nsa count] < expectedInputCount || logLevel >= 3) {
+        NSLog(@"MsPacman :: getInputValues :: input value count: %lu", (unsigned long)[nsa count]);
     }
     
     return nsa;
 }
 
 -(void) saveScreenshot: (CGImageRef) screenshot filename: (NSString*) filename number: (NSString*) num {
-    NSString *path = @"/Users/murphycrosby/Misc/Images/";
+    NSString *path = @"/Users/murphycrosby/Misc/Results-1/";
     NSString *type = @".png";
     
     NSString *dest = [NSString stringWithFormat:@"%@%@%@%@", path, filename, num, type];
@@ -824,7 +882,7 @@
         }
     }
     
-    NSString* path = @"/Users/murphycrosby/Misc/Images/";
+    NSString* path = @"/Users/murphycrosby/Misc/Results-1/";
     path = [path stringByAppendingString:filename];
     
     [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];

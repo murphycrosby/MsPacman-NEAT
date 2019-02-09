@@ -13,6 +13,7 @@
 
 +(int) populationSize;
 +(int) numGenerations;
++(double) mutationProbabilityUpdateWeight;
 +(double) mutationProbabilityReplaceWeight;
 +(double) mutationMaximumPerturbation;
 +(double) chanceMutateWeight;

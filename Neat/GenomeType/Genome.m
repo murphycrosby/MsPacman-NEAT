@@ -80,7 +80,7 @@ static bool genesisOccurred = false;
     return nil;
 }
 
--(GenomeLink*) getLinkFromNodeID: (int) fNodeID toNodeID: (int) tNodeID {
+-(GenomeLink*) getLinkFromToNodeID: (int) fNodeID toNodeID: (int) tNodeID {
     for (GenomeLink* nextLink in genoLinks) {
         if (nextLink.fromNode == fNodeID &&
             nextLink.toNode == tNodeID) {
@@ -105,13 +105,10 @@ static bool genesisOccurred = false;
     
     Genome* newGenome = [[Genome alloc] init];
     
-    double positionXOffset = 0.8/(double)nInputs;
-    
     for (int i = 0; i < nInputs; i++) {
         GenomeNode* inputNode = [[GenomeNode alloc] init];
         inputNode.nodeID = [InnovationDb getNextGenomeNodeID];
         inputNode.nodeType = INPUT;
-        inputNode.nodePosition = CGPointMake(0.1+i*positionXOffset, 0.1);
         [newGenome.genoNodes addObject: inputNode];
         
         [[InnovationDb sharedDb] insertNewNode:inputNode fromNode:0 toNode:0];
@@ -120,18 +117,14 @@ static bool genesisOccurred = false;
     GenomeNode* biasNode = [[GenomeNode alloc] init];
     biasNode.nodeID = [InnovationDb getNextGenomeNodeID];
     biasNode.nodeType = BIAS;
-    biasNode.nodePosition = CGPointMake(0.9, 0.1);
     [newGenome.genoNodes addObject: biasNode];
     [[InnovationDb sharedDb] insertNewNode:biasNode fromNode:0 toNode:0];
     nInputs++;
-    
-    positionXOffset = 1/(double)(nOutputs+1);
-    
+
     for (int i = 0; i < nOutputs; i++) {
         GenomeNode* outputNode = [[GenomeNode alloc] init];
         outputNode.nodeID = [InnovationDb getNextGenomeNodeID];
         outputNode.nodeType = OUTPUT;
-        outputNode.nodePosition = CGPointMake((i+1)*positionXOffset, 0.9);
         [newGenome.genoNodes addObject: outputNode];
         
         [[InnovationDb sharedDb] insertNewNode:outputNode fromNode:0 toNode:0];
@@ -162,23 +155,120 @@ static bool genesisOccurred = false;
     return self;
 }
 
-+(NSString*) printGenomeToString:(Genome*) genome {
++(void) balanceGenome:(Genome*) genome {
+    GenomeNode* fromNode;
+    GenomeNode* toNode;
+    NSMutableArray* links = [[NSMutableArray alloc] init];
+    
+    for (GenomeLink* link in genome.genoLinks) {
+        fromNode = [genome getNodeWithID:link.fromNode];
+        toNode = [genome getNodeWithID:link.toNode];
+        if(fromNode.nodeType == INPUT || fromNode.nodeType == BIAS) {
+            fromNode.nodeLayer = 0;
+            toNode.nodeLayer = 1;
+            continue;
+        }
+        
+        [links addObject:link];
+    }
+    
+    int layerCount = 1;
+    while (links.count > 0) {
+        NSMutableArray* l2 = [[NSMutableArray alloc] init];
+        
+        for (GenomeLink* link in links) {
+            fromNode = [genome getNodeWithID:link.fromNode];
+            toNode = [genome getNodeWithID:link.toNode];
+            
+            if (fromNode.nodeLayer > 0) {
+                toNode.nodeLayer = fromNode.nodeLayer + 1;
+                if (toNode.nodeLayer + 1 > layerCount) {
+                    layerCount = toNode.nodeLayer + 1;
+                }
+                continue;
+            }
+            
+            [l2 addObject:link];
+        }
+        
+        links = l2;
+    }
+    
+    int x = 50;
+    int y = 80;
+    int xPlus = 1000 / layerCount;
+    int yPlus = 100;
+    NSMutableDictionary* layerDict = [[NSMutableDictionary alloc] init];
+    
+    for(GenomeNode* node in genome.genoNodes) {
+        CGPoint point;
+        NSValue* v = [layerDict valueForKey:[NSString stringWithFormat:@"%i",node.nodeLayer]];
+        if(v == nil) {
+            point = CGPointMake((xPlus * node.nodeLayer) + x, y);
+        } else {
+            point = NSPointToCGPoint(v.pointValue);
+            point.y += yPlus;
+        }
+        [layerDict setObject:[NSValue valueWithPoint:NSPointFromCGPoint(point)] forKey:[NSString stringWithFormat:@"%i", node.nodeLayer]];
+        node.nodePosition = point;
+    }
+}
+
++(NSString*) saveGenomeToSvg:(Genome*) genome {
     NSMutableString* str = [[NSMutableString alloc] init];
     
-    [str appendString:[NSString stringWithFormat:@"-- Genome (%i) --\n", genome.genomeID]];
+    [Genome balanceGenome:genome];
+    
+    NSString* color = @"";
+    [str appendString:@"<svg viewBox=\"0 0 1300 60000\">\n"];
+    
     for (int i = 0; i < [genome.genoNodes count]; i++) {
         GenomeNode* gn = [genome.genoNodes objectAtIndex:i];
-        NSString* nodeType = [GenomeNode NodeTypeString:gn.nodeType];
-        [str appendString:[NSString stringWithFormat:@"NodeId: %d - %@\n", gn.nodeID, nodeType]];
         
-        for(int l = 0; l < [genome.genoLinks count]; l++) {
-            GenomeLink* gl = [genome.genoLinks objectAtIndex:l];
-            if(gn.nodeID == gl.fromNode) {
-                [str appendString:[NSString stringWithFormat:@"\tLinkId: %d (%@)- %d --[%1.3f]--> %d\n", gl.linkID, (gl.isEnabled ? @"ON" : @"OFF"), gl.fromNode, gl.weight, gl.toNode]];
-            }
+        if(gn.nodeType == INPUT || gn.nodeType == BIAS) {
+            color = @"steelblue";
+        } else if(gn.nodeType == HIDDEN) {
+            color = @"royalblue";
+        } else if(gn.nodeType == OUTPUT) {
+            color = @"navy";
         }
+        
+        [str appendString:[NSString stringWithFormat:@"<circle id=\"%d\" onclick=\"click(this)\" cx=\"%1.3f\" cy=\"%1.3f\" r=\"30\" style=\"fill:%@;\"></circle>\n", gn.nodeID, gn.nodePosition.x, gn.nodePosition.y, color]];
+        [str appendString:[NSString stringWithFormat:@"<text x=\"%1.3f\" y=\"%1.3f\" style=\"fill:white;font-size:16;\" text-anchor=\"middle\" alignment-baseline=\"middle\">%i</text>\n",gn.nodePosition.x, gn.nodePosition.y, i]];
+        [str appendString:[NSString stringWithFormat:@"<text x=\"%1.3f\" y=\"%1.3f\" style=\"fill:%@;font-size:16;\" text-anchor=\"middle\" alignment-baseline=\"hanging\">%@</text>\n",gn.nodePosition.x, gn.nodePosition.y+30, color, [GenomeNode NodeTypeString:gn.nodeType]]];
     }
-    [str appendString:@"-- End Genome --\n"];
+    
+    for (int i = 0; i < [genome.genoLinks count]; i++) {
+        GenomeLink* gl = [genome.genoLinks objectAtIndex:i];
+        GenomeNode* fromNode = [genome getNodeWithID:gl.fromNode];
+        GenomeNode* toNode = [genome getNodeWithID:gl.toNode];
+        
+        if(gl.isEnabled) {
+            color = @"black";
+        } else {
+            color = @"gray";
+        }
+        
+        [str appendString:[NSString stringWithFormat:@"<path id=\"line-%i-%i\" d=\"M%1.0f,%1.0f L%1.0f,%1.0f\" style=\"stroke:%@;stroke-width:2;\" class=\"invisible\"/>\n", fromNode.nodeID, toNode.nodeID, fromNode.nodePosition.x + 30, fromNode.nodePosition.y, toNode.nodePosition.x - 30, toNode.nodePosition.y, color]];
+        
+        [str appendString:[NSString stringWithFormat:@"<text id=\"text-%i-%i\" style=\"fill:%@;font-size:16;\" text-anchor=\"middle\" transform=\"translate(0,-3)\" class=\"invisible\"><textPath xlink:href=\"#line-%i-%i\" startOffset=\"50%%\">w: %1.3f</textPath></text>\n", fromNode.nodeID, toNode.nodeID, color, fromNode.nodeID, toNode.nodeID, gl.weight]];
+    }
+    
+    /*
+     <path id="line32" d="M80,80 L170,100" style="stroke:black;stroke-width:2" />
+     <text style="fill:black;font-size:16;" text-anchor="middle" transform="translate(0,-3)">
+     <textPath xlink:href="#line32" startOffset="50%">
+     w: -1.13
+     </textPath>
+     </text>
+     <text style="fill:black;font-size:16;" text-anchor="middle" transform="translate(0,15)">
+     <textPath xlink:href="#line32" startOffset="50%">
+     id: 1321
+     </textPath>
+     </text>
+    */
+    [str appendString:@"</svg>\n"];
+    
     return [NSString stringWithString:str];
 }
 
@@ -191,7 +281,7 @@ static bool genesisOccurred = false;
     }
 }
 
-double gaussrand() {
++(double) gaussrand {
     static int iset=0;
     static double gset;
     double fac,rsq,v1,v2;
@@ -216,20 +306,24 @@ double gaussrand() {
 -(void) perturbSingleLinkWeight {
     GenomeLink* randomLink = [genoLinks objectAtIndex:arc4random() % genoLinks.count];
     if (randomDouble() < [Parameters mutationProbabilityReplaceWeight]) {
-        randomLink.weight = gaussrand();
+        randomLink.weight = [Genome gaussrand];
     }
     else {
-        randomLink.weight += gaussrand() * [Parameters mutationMaximumPerturbation];
+        randomLink.weight += [Genome gaussrand] * [Parameters mutationMaximumPerturbation];
     }
 }
 
 -(void) perturbAllLinkWeights {
     for (GenomeLink* nextLink in genoLinks) {
+        if (randomDouble() > [Parameters mutationProbabilityUpdateWeight]) {
+            continue;
+        }
+        
         if (randomDouble() < [Parameters mutationProbabilityReplaceWeight]) {
-            nextLink.weight = gaussrand();
+            nextLink.weight = [Genome gaussrand];
         }
         else {
-            nextLink.weight += gaussrand() * [Parameters mutationMaximumPerturbation];
+            nextLink.weight += [Genome gaussrand] * [Parameters mutationMaximumPerturbation];
         }
     }
 }
@@ -275,8 +369,8 @@ double gaussrand() {
         GenomeNode* newNode = [[GenomeNode alloc] init];
         newNode.nodeID = [InnovationDb getNextGenomeNodeID];
         newNode.nodeType = HIDDEN;
-        newNode.nodePosition = CGPointMake(fromNode.nodePosition.x + ((toNode.nodePosition.x - fromNode.nodePosition.x) / 2),
-                                           fromNode.nodePosition.y + ((toNode.nodePosition.y - fromNode.nodePosition.y) / 2));
+        //newNode.nodePosition = CGPointMake(fromNode.nodePosition.x + ((toNode.nodePosition.x - fromNode.nodePosition.x) / 2),
+        //                                   fromNode.nodePosition.y + ((toNode.nodePosition.y - fromNode.nodePosition.y) / 2));
         [genoNodes addObject: newNode];
         // we can be sure this is a new node so add to innovation database
         [[InnovationDb sharedDb] insertNewNode:newNode fromNode:fromNode.nodeID toNode:toNode.nodeID];
@@ -336,15 +430,15 @@ double gaussrand() {
         return;
     }
     // do not link if already linked
-    if ([self getLinkFromNodeID:randomFromNode.nodeID toNodeID:randomToNode.nodeID] != nil) {
+    if ([self getLinkFromToNodeID:randomFromNode.nodeID toNodeID:randomToNode.nodeID] != nil) {
         return;
     }
     // do not link if links backwards in the network
-    if (randomFromNode.nodePosition.y > randomToNode.nodePosition.y) {
-        return;
-    }
+    //if (randomFromNode.nodePosition.y > randomToNode.nodePosition.y) {
+    //    return;
+    //}
     // cannot create a link where there is a reverse link existing
-    if ([self getLinkFromNodeID:randomToNode.nodeID toNodeID:randomFromNode.nodeID] != nil) {
+    if ([self getLinkFromToNodeID:randomToNode.nodeID toNodeID:randomFromNode.nodeID] != nil) {
         return;
     }
     
@@ -434,6 +528,11 @@ double gaussrand() {
         // disjoint gene
         else if (dadNextLink.linkID < mumNextLink.linkID) {
             GenomeLink* dadLink = [dadNextLink copy];
+            for(GenomeLink* gn in childGenome.genoLinks) {
+                if (gn.linkID == dadLink.linkID) {
+                    NSLog(@"Already Added");
+                }
+            }
             [childGenome.genoLinks addObject:dadLink];
             dadIndex++;
             if (dadIndex == genoLinks.count) {
@@ -447,6 +546,11 @@ double gaussrand() {
         else if (mumNextLink.linkID < dadNextLink.linkID) {
             // don't do anything - we ignore the less fit link
             GenomeLink* mumLink = [mumNextLink copy];
+            for(GenomeLink* gn in childGenome.genoLinks) {
+                if (gn.linkID == mumLink.linkID) {
+                    NSLog(@"Already Added");
+                }
+            }
             [childGenome.genoLinks addObject:mumLink];  // should do this but it seems to get good results
             mumIndex++;
             if (mumIndex == mumGenome.genoLinks.count) {
@@ -460,6 +564,11 @@ double gaussrand() {
     
     while (dadHasLinksLeft) {
         GenomeLink* dadLink = [dadNextLink copy];
+        for(GenomeLink* gn in childGenome.genoLinks) {
+            if (gn.linkID == dadLink.linkID) {
+                NSLog(@"Already Added");
+            }
+        }
         [childGenome.genoLinks addObject:dadLink];
         dadIndex++;
         if (dadIndex == genoLinks.count) {
@@ -547,14 +656,16 @@ double gaussrand() {
         }
     }
     if (iHaveLinksLeft) {
-        excessLinks++;
+        //excessLinks++;
+        excessLinks = (int)[genoLinks count] - (int)[otherGenome.genoLinks count];
         myIndex++;
         if (myIndex >= genoLinks.count) {
             iHaveLinksLeft = false;
         }
     }
     if (otherHasLinksLeft) {
-        excessLinks++;
+        //excessLinks++;
+        excessLinks = (int)[otherGenome.genoLinks count] - (int)[genoLinks count];
         otherIndex++;
         if (otherIndex >= otherGenome.genoLinks.count) {
             otherHasLinksLeft = false;

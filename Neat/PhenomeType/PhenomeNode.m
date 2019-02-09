@@ -20,16 +20,18 @@
         incomingPhenoLinks = [[NSMutableArray alloc] init];
         outgoingPhenoLinks = [[NSMutableArray alloc] init];
         activated = FALSE;
+        hiddenState = 0.0;
+        cellState = 0.0;
     }
     return self;
 }
 
 -(NSString*) description {
     
-    NSString* nodePositionString = [GenomeNode NodeTypeString:nodeType];
+    NSString* nodeTypeString = [GenomeNode NodeTypeString:nodeType];
     
     return [NSString stringWithFormat:@"%@ Node %i with %lu incoming links and %lu outgoing links",
-            nodePositionString, nodeID,
+            nodeTypeString, nodeID,
             (unsigned long)[incomingPhenoLinks count], (unsigned long)[outgoingPhenoLinks count]];
 }
 
@@ -50,6 +52,10 @@
     }
     
     for (PhenoLink* nextIncomingLink in incomingPhenoLinks) {
+        if(nextIncomingLink.fromNode.activated == false) {
+            return;
+        }
+        
         if (nextIncomingLink.isEnabled) {
             activeSum += (nextIncomingLink.fromNode.activationValue * nextIncomingLink.weight);
             /*
@@ -70,7 +76,7 @@
         activationValue += activeSum;
     } else {
         //NSLog(@"activationValue B: %1.3f :  %1.3f", activationValue, activeSum);
-        activationValue += [PhenomeNode fsigmoid: activeSum slope:0 constant:0];
+        activationValue += [PhenomeNode fsigmoid: activeSum];
         //NSLog(@"activationValue A: %1.3f", activationValue);
     }
     
@@ -81,32 +87,47 @@
             [outgoingLink.toNode activate];
         }
     }
-    
-    //lastActivationValue = activationValue;
-    //NSLog(@"Before Sigmoid = %1.3f",activeSum);
-    //activationValue = [PhenomeNode fsigmoid: activeSum slope:4.924273 constant:2.4621365];
-    //NSLog(@"After Sigmoid = %1.3f",activationValue);
-    
-    // I suspect a more forgiving test will be required here in the future
-    //hasChangedSinceLastTraversal = (activationValue == lastActivationValue) ? false : true;
 }
 
-+(double) fsigmoid:(double) activesum slope:(double) slope constant:(double) constant {
-    //RIGHT SHIFTED ---------------------------------------------------------
-    //return (1/(1+(exp(-(slope*activesum-constant))))); //ave 3213 clean on 40 runs of p2m and 3468 on another 40
-    //41394 with 1 failure on 8 runs
+-(void) activateLSTM {
+    double activeSum = 0.0;
     
-    //LEFT SHIFTED ----------------------------------------------------------
-    //return (1/(1+(exp(-(slope*activesum+constant))))); //original setting ave 3423 on 40 runs of p2m, 3729 and 1 failure also
+    if(activated) {
+        return;
+    }
     
-    //PLAIN SIGMOID ---------------------------------------------------------
-    return (1/(1+(exp(-activesum)))); //3511 and 1 failure
+    if(nodeType != INPUT && nodeType != BIAS) {
+        for (PhenoLink* nextIncomingLink in incomingPhenoLinks) {
+            if(nextIncomingLink.fromNode.activated == false) {
+                return;
+            }
+            
+            if (nextIncomingLink.isEnabled) {
+                activeSum += (nextIncomingLink.fromNode.activationValue * nextIncomingLink.weight);
+            }
+        }
+        
+        double ft = [PhenomeNode fsigmoid:(hiddenState + activeSum)];
+        double it = ft;
+        double ot = ft;
+        double candidate = tanh(hiddenState + activeSum);
+        cellState = (ft * cellState) + (candidate * it);
+        hiddenState = ot * tanh(cellState);
+        
+        activationValue = hiddenState;
+    }
     
-    //LEFT SHIFTED NON-STEEPENED---------------------------------------------
-    //return (1/(1+(exp(-activesum-constant)))); //simple left shifted
+    activated = TRUE;
     
-    //NON-SHIFTED STEEPENED
-    //return (1/(1+(exp(-(slope*activesum))))); //Compressed
+    for(PhenoLink* outgoingLink in outgoingPhenoLinks) {
+        if(outgoingLink.isEnabled) {
+            [outgoingLink.toNode activateLSTM];
+        }
+    }
+}
+
++(double) fsigmoid:(double) activesum {
+    return (1/(1+(exp(-activesum))));
 }
 
 -(void) clearLinks {

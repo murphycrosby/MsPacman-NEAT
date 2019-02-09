@@ -39,6 +39,7 @@
 -(BOOL) isGameOver: (CGImageRef) screenshot;
 -(BOOL) isReady: (CGImageRef) screenshot;
 -(long) getScore: (CGImageRef) screenshot;
+-(long) getPelletsEaten: (CGImageRef) screenshot;
 -(NSMutableArray*) getInputValues: (CGImageRef) screenshot;
 
 @end

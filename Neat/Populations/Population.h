@@ -13,7 +13,7 @@
 @class Organism;
 @class Genome;
 
-@interface Population : NSObject {
+@interface Population : NSObject <NSSecureCoding> {
     //NSMutableArray* allOrganisms;
     //NSMutableArray* allSpecies;
     //int generation;
@@ -26,6 +26,9 @@
 
 -(void) evolvePopulation;
 -(Organism*) bestFitness;
++(void) saveToHtml: (Population*) population directory: (NSString*) directory populationId: (NSString*) populationId;
++(void) saveToFile: (Population*) population filename: (NSString*) filename;
++(Population*) loadFromFile: (NSString*) filename;
 +(Population*) spawnInitialGenerationFromGenome: (Genome*) genesisGenome generation:(int) generation fitness:(double) fitness;
 
 @end

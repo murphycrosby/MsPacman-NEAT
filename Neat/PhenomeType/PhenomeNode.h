@@ -13,15 +13,9 @@
 #import "GenomeNode.h"
 
 @interface PhenomeNode : NSObject {
-    //int nodeID;
-    //NodeType nodeType;
-    
-    //NSMutableArray* incomingPhenoLinks;
-    //NSMutableArray* outgoingPhenoLinks;
-    
-    //double activationValue;
-    //double lastActivationValue;
-    //bool hasChangedSinceLastTraversal;
+    //for LSTM
+    double hiddenState;
+    double cellState;
 }
 
 @property int nodeID;
@@ -32,9 +26,10 @@
 @property BOOL activated;
 
 -(void) activate;
+-(void) activateLSTM;
 -(void) clearLinks;
 
-+(double) fsigmoid:(double) activesum slope:(double) slope constant:(double) constant;
++(double) fsigmoid:(double) activesum;
 //-(double) gaussrand;
 
 @end

@@ -32,7 +32,7 @@
     CFArrayApplyFunction(windowList, CFRangeMake(0, CFArrayGetCount(windowList)), &WindowListApplierFunction, (__bridge void*)(windowListData));
     CFRelease(windowList);
     
-    NSString *path = @"/Users/murphycrosby/Misc/Images/";
+    NSString *path = @"/Users/murphycrosby/Misc/Results-1/";
     NSString *filename = @"screenshot-";
     NSString *type = @".png";
     

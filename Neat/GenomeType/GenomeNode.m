@@ -12,7 +12,7 @@
 
 @implementation GenomeNode
 
-@synthesize nodeID, nodeType, nodePosition;
+@synthesize nodeID, nodeType, nodeLayer, nodePosition;
 
 -(int) getInnovationID {
     return nodeID;
@@ -30,16 +30,17 @@
 
 -(NSString*) description {
     
-    NSString* nodePositionString = [GenomeNode NodeTypeString:nodeType];
+    NSString* nodeTypeString = [GenomeNode NodeTypeString:nodeType];
     
-    return [NSString stringWithFormat:@"%@ Node %i at (%1.1f, %1.1f)",
-            nodePositionString, nodeID, nodePosition.x, nodePosition.y];
+    return [NSString stringWithFormat:@"%@ Node %i at ()",
+            nodeTypeString, nodeID];
 }
 
 -(GenomeNode*) copyWithZone: (NSZone*) zone {
     GenomeNode* copiedGenoNode = [[GenomeNode alloc] init];
     copiedGenoNode.nodeID = nodeID;
     copiedGenoNode.nodeType = nodeType;
+    copiedGenoNode.nodeLayer = nodeLayer;
     copiedGenoNode.nodePosition = nodePosition;
     return copiedGenoNode;
 }
@@ -49,6 +50,8 @@
     if (self) {
         nodeID = [coder decodeIntForKey:@"nodeID"];
         nodeType = [coder decodeIntForKey:@"nodeType"];
+        nodeLayer = [coder decodeIntForKey:@"nodeLayer"];
+        nodePosition = [coder decodePointForKey:@"nodePosition"];
         
         if(![[InnovationDb sharedDb] nodeExists: nodeID]) {
             [[InnovationDb sharedDb] insertNewNode:self fromNode:0 toNode:0];
@@ -61,6 +64,8 @@
 -(void) encodeWithCoder:(NSCoder*) coder {
     [coder encodeInt:nodeID forKey:@"nodeID"];
     [coder encodeInt:nodeType forKey:@"nodeType"];
+    [coder encodeInt:nodeLayer forKey:@"nodeLayer"];
+    [coder encodePoint:nodePosition forKey:@"nodePosition"];
 }
 
 +(BOOL) supportsSecureCoding {

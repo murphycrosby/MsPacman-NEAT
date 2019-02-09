@@ -13,8 +13,10 @@
 #import "InnovationDb.h"
 #import "Population.h"
 #import "Organism.h"
+#import "Species.h"
 #import "Network.h"
 #import "Genome.h"
+#import "GenomeLink.h"
 
 #import "PhenomeNode.h"
 
@@ -26,7 +28,6 @@
 @synthesize keyboard;
 @synthesize screen;
 @synthesize msPacman;
-//@synthesize sighandler;
 
 - (id) init: (int) logLvl
 {
@@ -57,6 +58,8 @@
     NSFileManager* fileManager = [NSFileManager defaultManager];
     CGImageRef gameScreen = nil;
     NSMutableArray* inputs;
+    Population* population;
+    int generation = 1;
     long score = 0;
     BOOL gameOver = NO;
     BOOL ready = NO;
@@ -64,60 +67,78 @@
     if(logLevel >= 3) {
         NSLog(@"Game :: playEvolve :: start");
     }
-    
     /*
-    NSMutableArray* nodes = [[NSMutableArray alloc] init];
-    PhenomeNode* n1 = [[PhenomeNode alloc] init];
-    n1.nodeType = OUTPUT;
-    n1.activationValue = 56;
-    [nodes addObject:n1];
+    NSMutableArray* inp = [[NSMutableArray alloc] init];
+    [inp addObject:[NSNumber numberWithInt:86.000]];
+    [inp addObject:[NSNumber numberWithInt:279.000]];
+    [inp addObject:[NSNumber numberWithInt:137.000]];
+    [inp addObject:[NSNumber numberWithInt:316.000]];
+    [inp addObject:[NSNumber numberWithInt:1.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:1.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:728.000]];
+    [inp addObject:[NSNumber numberWithInt:194.000]];
+    [inp addObject:[NSNumber numberWithInt:786.000]];
+    [inp addObject:[NSNumber numberWithInt:239.000]];
+    [inp addObject:[NSNumber numberWithInt:766.000]];
+    [inp addObject:[NSNumber numberWithInt:499.000]];
+    [inp addObject:[NSNumber numberWithInt:825.000]];
+    [inp addObject:[NSNumber numberWithInt:545.000]];
+    [inp addObject:[NSNumber numberWithInt:457.000]];
+    [inp addObject:[NSNumber numberWithInt:639.000]];
+    [inp addObject:[NSNumber numberWithInt:516.000]];
+    [inp addObject:[NSNumber numberWithInt:683.000]];
+    [inp addObject:[NSNumber numberWithInt:171.000]];
+    [inp addObject:[NSNumber numberWithInt:577.000]];
+    [inp addObject:[NSNumber numberWithInt:230.000]];
+    [inp addObject:[NSNumber numberWithInt:617.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
+    [inp addObject:[NSNumber numberWithInt:0.000]];
     
-    PhenomeNode* n2 = [[PhenomeNode alloc] init];
-    n2.nodeType = OUTPUT;
-    n2.activationValue = -54;
-    [nodes addObject:n2];
-    
-    PhenomeNode* n3 = [[PhenomeNode alloc] init];
-    n3.nodeType = OUTPUT;
-    n3.activationValue = 101;
-    [nodes addObject:n3];
-    
-    PhenomeNode* n4 = [[PhenomeNode alloc] init];
-    n4.nodeType = OUTPUT;
-    n4.activationValue = 1;
-    [nodes addObject:n4];
-    
-    [Network fscale:nodes max:100 min:-100];
-    
-    for (PhenomeNode* nextPhenoNode in nodes) {
-        if(nextPhenoNode.nodeType == OUTPUT) {
-            NSLog(@"[%1.3f]", nextPhenoNode.activationValue);
-        }
+    NSArray* arr = [Network fscale:inp min:-6 max:6];
+    for (int i = 0; i < arr.count; i++) {
+        NSLog(@"Before: %1.3f  -  After: %1.3f", [[inp objectAtIndex:i] doubleValue], [[arr objectAtIndex:i] doubleValue]);
     }
-    
-    NSArray* arr = [Network fsoftmax:nodes];
-    NSLog(@"[%1.3f] [%1.3f] [%1.3f] [%1.3f]", [arr[0] doubleValue], [arr[1] doubleValue], [arr[2] doubleValue], [arr[3] doubleValue]);
-    
-    return;
     */
-    NSString* filename = @"/Users/murphycrosby/Misc/Images/org-gen-25.org";
-    Organism * org;
-    Genome* genome;
-    int generation = 0;
-    double fitness = 0;
     
-    if ([fileManager fileExistsAtPath:filename]) {
-        org = [Organism loadFromFile:filename];
-        genome = org.genome;
-        generation = org.generation + 1;
-        //generation = 15 + 1;
-        fitness = org.fitness;
-    } else {
-        genome = [Genome createGenome:366 outputs:4];
+    NSString* pop_file = @"/Users/murphycrosby/Misc/Results-1/gen-6.pop";
+    NSString* org_file = @"";
+    
+    if ([fileManager fileExistsAtPath:pop_file]) {
+        population = [Population loadFromFile:pop_file];
+        generation = population.generation;
     }
+     else {
+        Genome* genome;
+        double fitness = 0.0;
+        if ([fileManager fileExistsAtPath:org_file]) {
+            Organism * organism = [Organism loadFromFile:org_file];
+            genome = organism.genome;
+            fitness = organism.fitness;
+        } else {
+            //genome = [Genome createGenome:366 outputs:4];
+            genome = [Genome createGenome:40 outputs:4];
+        }
+        
+        population = [Population spawnInitialGenerationFromGenome:genome generation:generation fitness:fitness];
+    }
+    
     NSLog(@"Innovation: GenomeNodeID: %i, InnovationID: %i", [InnovationDb getGenomeNodeID], [InnovationDb getInnovationID]);
-
-    Population* population = [Population spawnInitialGenerationFromGenome:genome generation:generation fitness:fitness];
     
     if(logLevel >= 3) {
         NSLog(@"Game :: playEvolve :: Starting Game");
@@ -126,8 +147,18 @@
     NSLog(@"Game :: playEvolve :: Starting Generation: %i to %i", generation, generation + [Parameters numGenerations]);
     for (int i = generation; i < generation + [Parameters numGenerations]; i++) {
         NSLog(@" ");
-        NSLog(@"Game :: playEvolve ::    Generation: %i", i);
-        NSLog(@"Game :: playEvolve :: Species Count: %lu", (unsigned long)[population.allSpecies count]);
+        NSLog(@"Game :: playEvolve :: Population Fittest: %1.3f", population.fittestOrganismEver.fitness);
+        NSLog(@"Game :: playEvolve ::         Generation: %i", i);
+        NSLog(@"Game :: playEvolve ::      Species Count: %lu", (unsigned long)[population.allSpecies count]);
+        for (Species* s in population.allSpecies) {
+            NSLog(@"Species Info :: Count: %lu", [s.speciesOrganisms count]);
+            NSLog(@"\t      Fittest Fitness: %1.3f", s.fittestOrganism.fitness);
+            NSLog(@"\t                  Age: %i", s.age);
+            NSLog(@"\tAge Since Improvement: %i", s.ageSinceImprovement);
+            for(Organism* ooo in s.speciesOrganisms) {
+                NSLog(@"\t\t      Fitnest: %1.3f", ooo.fitness);
+            }
+        }
         
         for (int o = 0; o < [population.allOrganisms count]; o++) {
             Organism* nextOrganism = [population.allOrganisms objectAtIndex:o];
@@ -135,6 +166,8 @@
             NSLog(@"Game :: playEvolve :: Organism (%i of %lu) :: Generation: %i", o + 1, (unsigned long)[population.allOrganisms count], i);
             
             [nextOrganism developNetwork];
+            [keyboard sendKey:kHIDUsage_KeyboardA];
+            [NSThread sleepForTimeInterval:1.0f];
             
             score = 0;
             gameOver = NO;
@@ -162,7 +195,8 @@
                 }
                 play = TRUE;
                 
-                score = [msPacman getScore:gameScreen];
+                //score = [msPacman getScore:gameScreen];
+                score = [msPacman getPelletsEaten:gameScreen];
                 if(logLevel >= 3) {
                     NSLog(@"Current Score: %ld", score);
                 }
@@ -231,9 +265,9 @@
                     NSLog(@" ");
                 }
                 
-                [NSThread sleepForTimeInterval:0.1f];
-                //return;
+                //[NSThread sleepForTimeInterval:0.1f];
             }
+            score = [msPacman getPelletsEaten:gameScreen];
             CGImageRelease(gameScreen);
             
             nextOrganism.fitness = score;
@@ -244,24 +278,28 @@
             NSLog(@"Game :: playEvolve :: Resetting game for new Network");
             [keyboard sendKey:kHIDUsage_KeyboardReturnOrEnter];
             [NSThread sleepForTimeInterval:1.0f];
-            [keyboard sendKey:kHIDUsage_KeyboardA];
-            [NSThread sleepForTimeInterval:1.0f];
         }
         
-        Organism* best = [population bestFitness];
-        best.generation = population.generation;
-        NSLog(@"Game :: playEvolve :: Best Fitness: %1.0f", best.fitness);
         //We want to keep track of the best from each generation
+        Organism* best = [population bestFitness];
+        NSLog(@"Game :: playEvolve :: Best Fitness: %1.0f", best.fitness);
         [self writeTracking:i score:best.fitness];
         
-        NSString* filename = [NSString stringWithFormat:@"/Users/murphycrosby/Misc/Images/org-gen-%i",i];
-        NSString* path = [NSString stringWithFormat:@"%@.org", filename];
-        [Organism saveToFile:best filename:path];
-        path = [NSString stringWithFormat:@"%@.txt", filename];
-        [Organism printToFile:best filename:path];
+        NSString* path = @"/Users/murphycrosby/Misc/Results-1/";
+        NSString* populationFilename = [NSString stringWithFormat:@"%@/gen-%i.pop", path, population.generation];
+        
+        //Save the old population with the scores; overwrite if already there
+        [Population saveToFile:population filename:populationFilename];
+        [Population saveToHtml:population directory:path populationId:[NSString stringWithFormat:@"%d", population.generation]];
         
         NSLog(@"Game :: playEvolve :: EVOLVE - GEN(%d)", i + 1);
         [population evolvePopulation];
+        
+        //Generation moves up one after evolution
+        //Save the new population as bookmark
+        populationFilename = [NSString stringWithFormat:@"%@/gen-%i.pop", path, population.generation];
+        [Population saveToFile:population filename:populationFilename];
+        
         NSLog(@"Game :: playEvolve :: Fittest Organism: %1.3f", population.fittestOrganismEver.fitness);
     }
     
@@ -270,7 +308,7 @@
 
 -(void) writeTracking:(int) generation score:(int) score {
     NSFileManager* fileManager = [NSFileManager defaultManager];
-    NSString* tracking = @"/Users/murphycrosby/Misc/Images/generation_tracking.csv";
+    NSString* tracking = @"/Users/murphycrosby/Misc/Results-1/generation_tracking.csv";
     
     if (![fileManager fileExistsAtPath:tracking]) {
         NSString* str = @"generation|fitness\n";
@@ -284,21 +322,6 @@
     NSData* data = [str dataUsingEncoding:NSUTF8StringEncoding];
     [fileHandler writeData:data];
     [fileHandler closeFile];
-}
-
--(void) rectTest:(CGRect*) blah {
-    if(CGRectIsEmpty(*blah)) {
-        NSLog(@"CGRect is empty");
-        *blah = CGRectMake(10, 10, 10, 10);
-    } else {
-        NSLog(@"CGRect is not empty");
-        blah->origin.x += 10;
-        blah->origin.y += 10;
-        blah->size.width += 10;
-        blah->size.height += 10;
-    }
-    
-    return;
 }
 
 -(void) playBest {
