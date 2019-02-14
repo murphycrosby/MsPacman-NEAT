@@ -293,9 +293,9 @@
     //Whole score
     if(logLevel >= 4) {
         CGRect rect = CGRectMake(185, 160, 220, 25);
-        CGImageRef imageRef = CGImageCreateWithImageInRect(screenshot, rect);
-        [self saveScreenshot:imageRef filename:@"whole_score" number:0];
-        CGImageRelease(imageRef);
+        CGImageRef ir = CGImageCreateWithImageInRect(screenshot, rect);
+        [self saveScreenshot:ir filename:@"whole_score" number:0];
+        CGImageRelease(ir);
     }
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
@@ -386,7 +386,7 @@
 -(NSMutableArray*) getInputValues: (CGImageRef) screenshot {
     //int expectedInputCount = 366;
     //int history = 4;
-    int expectedInputCount = 40;
+    int expectedInputCount = 80;
     int history = 1;
     
     NSMutableArray* nsa = [[NSMutableArray alloc] init];
@@ -477,6 +477,7 @@
     canGoRight = FALSE;
     canGoDown = FALSE;
     canGoLeft = FALSE;
+    CGRect msPacmanVisRange = CGRectZero;
     
     if(logLevel >= 3) {
         NSLog(@"===== MsPacman =====");
@@ -486,6 +487,7 @@
         if(rect.size.width >= 25 && rect.size.height >= 25) {
             if(ms == 0) {
                 msPacman = rect;
+                msPacmanVisRange = CGRectMake(rect.origin.x - 75, rect.origin.y - 75, 150, 105);
             }
             CGRect up = CGRectMake(rect.origin.x + 8, rect.origin.y - 10, rect.size.width - 16, 5);
             CGRect right = CGRectMake(rect.origin.x + rect.size.width + 10, rect.origin.y + 8, 5, rect.size.height - 16);
@@ -539,10 +541,6 @@
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
         //NSLog(@"MsPacman History: %d, %d, %d, %d", (int)h.origin.x,(int)h.origin.y,(int)h.size.width,(int)h.size.height);
     }
     [nsa addObject:[NSNumber numberWithInt:canGoUp]];
@@ -595,10 +593,6 @@
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
     }
     if(logLevel >= 3) {
         NSLog(@"====================");
@@ -640,10 +634,6 @@
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
     }
     if(logLevel >= 3) {
         NSLog(@"====================");
@@ -685,10 +675,6 @@
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
     }
     if(logLevel >= 3) {
         NSLog(@"====================");
@@ -730,10 +716,6 @@
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
     }
     if(logLevel >= 3) {
         NSLog(@"====================");
@@ -802,36 +784,49 @@
         [nsa addObject:[NSNumber numberWithInt:h.origin.y]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.x + h.size.width]];
         [nsa addObject:[NSNumber numberWithInt:h.origin.y + h.size.height]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.x]];
-        //[nsa addObject:[NSNumber numberWithInt:h.origin.y]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.width]];
-        //[nsa addObject:[NSNumber numberWithInt:h.size.height]];
     }
     if(logLevel >= 3) {
         NSLog(@"====================");
         NSLog(@" ");
     }
-    /*
+    
+    NSMutableArray* pellets = [[NSMutableArray alloc] init];
     for(int c = 0; c < [lvl1.level1Pellets count]; c++) {
         CGRect rect = [[lvl1.level1Pellets objectAtIndex:c] rectValue];
-        int x = CGRectGetMidX(rect);
-        int y = CGRectGetMidY(rect);
         
-        int offset = 4 * ((width * y) + round(x));
+        CGPoint point = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+        int offset = 4 * ((width * point.y) + round(point.x));
         int red   = data[offset + 1];
         int green = data[offset + 2];
         int blue  = data[offset + 3];
         
+        //Has the pellet been eaten?
         //Pellet - [0][167][255]
         if (red == 0 && green == 167 && blue == 255) {
-            [nsa addObject:[NSNumber numberWithInt:1]];
+            [pellets addObject:[NSValue valueWithRect:rect]];
+        }
+    }
+    NSArray* sorted = [pellets sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        CGRect r1 = [a rectValue];
+        CGRect r2 = [b rectValue];
+        double d1 = [self distanceBetweenPoint:CGPointMake(CGRectGetMidX(r1), CGRectGetMidY(r1)) andPoint:CGPointMake(CGRectGetMidX(self->msPacman), CGRectGetMidY(self->msPacman))];
+        
+        double d2 = [self distanceBetweenPoint:CGPointMake(CGRectGetMidX(r2), CGRectGetMidY(r2)) andPoint:CGPointMake(CGRectGetMidX(self->msPacman), CGRectGetMidY(self->msPacman))];
+
+        return d1 > d2;
+    }];
+    for(int i = 0; i < 20; i++) {
+        if(i < sorted.count) {
+            CGRect rect = [[sorted objectAtIndex:i] rectValue];
+            [nsa addObject:[NSNumber numberWithInt:CGRectGetMidX(rect)]];
+            [nsa addObject:[NSNumber numberWithInt:CGRectGetMidY(rect)]];
         } else {
+            [nsa addObject:[NSNumber numberWithInt:0]];
             [nsa addObject:[NSNumber numberWithInt:0]];
         }
     }
-    */
     
-    if([nsa count] < expectedInputCount || logLevel >= 3) {
+    if([nsa count] != expectedInputCount || logLevel >= 3) {
         NSLog(@"MsPacman :: getInputValues :: input value count: %lu", (unsigned long)[nsa count]);
     }
     
@@ -1112,6 +1107,13 @@
     } else {
         return colorArray;
     }
+}
+
+-(double) distanceBetweenPoint:(CGPoint)a andPoint:(CGPoint)b
+{
+    double a2 = powf(a.x-b.x, 2.f);
+    double b2 = powf(a.y-b.y, 2.f);
+    return sqrtf(a2 + b2);
 }
 
 @end

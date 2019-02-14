@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Parameters.h"
+#import "Utilities.h"
 #import "Organism.h"
 #import "Genome.h"
 #import "Network.h"
@@ -155,14 +157,22 @@
 
 -(Organism*) reproduceChildOrganism {
     Genome* childGenome = [genome copy];
-    [childGenome mutateGenome];
+    if(randomDouble() < [Parameters chanceMutate]) {
+        [childGenome mutateGenome];
+    } else {
+        NSLog(@"Organims :: reproduceChildOrganism :: No mutation");
+    }
     Organism* childOrganism = [[Organism alloc] initWithGenome:childGenome];
     return childOrganism;
 }
 
 -(Organism*) reproduceChildOrganismWithOrganism: (Organism*) lessFitMate {
     Genome* childGenome = [genome offspringWithGenome: lessFitMate.genome];
-    [childGenome mutateGenome];
+    if(randomDouble() < [Parameters chanceMutate]) {
+        [childGenome mutateGenome];
+    } else {
+        NSLog(@"Organims :: reproduceChildOrganismWithOrganism :: No mutation");
+    }
     Organism* childOrganism = [[Organism alloc] initWithGenome:childGenome];
     return childOrganism;
 }

@@ -29,7 +29,7 @@
 -(void) clearAndAge;
 -(bool) shouldIncludeOrganism:(Organism*) org;
 -(void) addOrganism: (Organism*) org;
--(NSArray*) spawnOrganisms: (int) numToSpawn;
+-(NSArray*) spawnOrganisms: (int) numToSpawn fittestEver: (Organism*) fittest;
 -(double) numberToSpawnBasedOnAverageFitness: (double) averageFitness;
 -(NSComparisonResult) compareBestFitnessWith: (Species*) anotherSpecies;
 +(void) saveToHtml: (Species*) species directory: (NSString*) directory speciesId: (NSString*) speciesId;

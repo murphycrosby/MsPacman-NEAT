@@ -467,12 +467,19 @@ static bool genesisOccurred = false;
     if (genoNodes.count < [Parameters maximumNeurons] &&
         randomDouble() < [Parameters chanceAddNode]) {
         NSLog(@"Genome :: mutateGenome :: addNode");
-        [self addNode];
+        int count = arc4random_uniform(5);
+        while(count == 0) {
+            count = arc4random_uniform(5);
+        }
+        NSLog(@"Genome :: mutateGenome :: addNode :: %d", count);
+        for(int i = 0; i < count; i++) {
+            [self addNode];
+        }
     } else if (randomDouble() < [Parameters chanceAddLink]) {
         NSLog(@"Genome :: mutateGenome :: addLink");
         [self addLink];
     } else if (randomDouble() < [Parameters chanceMutateWeight]) {
-        NSLog(@"Genome :: mutateGenome :: perturbAllLinkWeights");
+        NSLog(@"Genome :: mutateGenome :: perturbAllLinkWeights :: %lu", (unsigned long)[self.genoLinks count]);
         [self perturbAllLinkWeights];
     } else if (randomDouble() < [Parameters chanceToggleLinks]) {
         NSLog(@"Genome :: mutateGenome :: toggleRandomLink");
@@ -530,7 +537,7 @@ static bool genesisOccurred = false;
             GenomeLink* dadLink = [dadNextLink copy];
             for(GenomeLink* gn in childGenome.genoLinks) {
                 if (gn.linkID == dadLink.linkID) {
-                    NSLog(@"Already Added");
+                    NSLog(@"Genome :: offspringWithGenome :: dadNextLink.linkID < mumNextLink.linkID :: Already Added");
                 }
             }
             [childGenome.genoLinks addObject:dadLink];
@@ -548,7 +555,7 @@ static bool genesisOccurred = false;
             GenomeLink* mumLink = [mumNextLink copy];
             for(GenomeLink* gn in childGenome.genoLinks) {
                 if (gn.linkID == mumLink.linkID) {
-                    NSLog(@"Already Added");
+                    NSLog(@"Genome :: offspringWithGenome :: mumNextLink.linkID < dadNextLink.linkID :: Already Added");
                 }
             }
             [childGenome.genoLinks addObject:mumLink];  // should do this but it seems to get good results
@@ -566,7 +573,7 @@ static bool genesisOccurred = false;
         GenomeLink* dadLink = [dadNextLink copy];
         for(GenomeLink* gn in childGenome.genoLinks) {
             if (gn.linkID == dadLink.linkID) {
-                NSLog(@"Already Added");
+                NSLog(@"Genome :: offspringWithGenome :: dadHasLinksLeft :: Already Added");
             }
         }
         [childGenome.genoLinks addObject:dadLink];
@@ -616,7 +623,14 @@ static bool genesisOccurred = false;
     while (iHaveLinksLeft && otherHasLinksLeft) {
         if (myNextLink.linkID == otherNextLink.linkID) {
             matchingLinks++;
-            weightDifference += fabs(myNextLink.weight - otherNextLink.weight);
+            
+            if(myNextLink.isEnabled && !otherNextLink.isEnabled) {
+                weightDifference += fabs(myNextLink.weight);
+            } else if (!myNextLink.isEnabled && otherNextLink.isEnabled) {
+                weightDifference += fabs(otherNextLink.weight);
+            } else {
+                weightDifference += fabs(myNextLink.weight - otherNextLink.weight);
+            }
             
             myIndex++;
             if (myIndex >= genoLinks.count) {

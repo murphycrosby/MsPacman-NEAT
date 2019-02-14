@@ -29,6 +29,7 @@
 +(double) chanceAddLink;
 +(double) chanceAddNode;
 +(double) mutateWeightOnlyDontCrossover;
++(double) chanceMutate;
 +(int) youngSpeciesAgeThreshold;
 +(double) youngSpeciesFitnessBonus;
 +(int) oldSpeciesAgeThreshold;

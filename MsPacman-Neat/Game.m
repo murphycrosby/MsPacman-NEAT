@@ -67,56 +67,8 @@
     if(logLevel >= 3) {
         NSLog(@"Game :: playEvolve :: start");
     }
-    /*
-    NSMutableArray* inp = [[NSMutableArray alloc] init];
-    [inp addObject:[NSNumber numberWithInt:86.000]];
-    [inp addObject:[NSNumber numberWithInt:279.000]];
-    [inp addObject:[NSNumber numberWithInt:137.000]];
-    [inp addObject:[NSNumber numberWithInt:316.000]];
-    [inp addObject:[NSNumber numberWithInt:1.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:1.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:728.000]];
-    [inp addObject:[NSNumber numberWithInt:194.000]];
-    [inp addObject:[NSNumber numberWithInt:786.000]];
-    [inp addObject:[NSNumber numberWithInt:239.000]];
-    [inp addObject:[NSNumber numberWithInt:766.000]];
-    [inp addObject:[NSNumber numberWithInt:499.000]];
-    [inp addObject:[NSNumber numberWithInt:825.000]];
-    [inp addObject:[NSNumber numberWithInt:545.000]];
-    [inp addObject:[NSNumber numberWithInt:457.000]];
-    [inp addObject:[NSNumber numberWithInt:639.000]];
-    [inp addObject:[NSNumber numberWithInt:516.000]];
-    [inp addObject:[NSNumber numberWithInt:683.000]];
-    [inp addObject:[NSNumber numberWithInt:171.000]];
-    [inp addObject:[NSNumber numberWithInt:577.000]];
-    [inp addObject:[NSNumber numberWithInt:230.000]];
-    [inp addObject:[NSNumber numberWithInt:617.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
-    [inp addObject:[NSNumber numberWithInt:0.000]];
     
-    NSArray* arr = [Network fscale:inp min:-6 max:6];
-    for (int i = 0; i < arr.count; i++) {
-        NSLog(@"Before: %1.3f  -  After: %1.3f", [[inp objectAtIndex:i] doubleValue], [[arr objectAtIndex:i] doubleValue]);
-    }
-    */
-    
-    NSString* pop_file = @"/Users/murphycrosby/Misc/Results-1/gen-6.pop";
+    NSString* pop_file = @"/Users/murphycrosby/Misc/Results-1/gen-157.pop";
     NSString* org_file = @"";
     
     if ([fileManager fileExistsAtPath:pop_file]) {
@@ -132,7 +84,7 @@
             fitness = organism.fitness;
         } else {
             //genome = [Genome createGenome:366 outputs:4];
-            genome = [Genome createGenome:40 outputs:4];
+            genome = [Genome createGenome:80 outputs:4];
         }
         
         population = [Population spawnInitialGenerationFromGenome:genome generation:generation fitness:fitness];
@@ -150,13 +102,14 @@
         NSLog(@"Game :: playEvolve :: Population Fittest: %1.3f", population.fittestOrganismEver.fitness);
         NSLog(@"Game :: playEvolve ::         Generation: %i", i);
         NSLog(@"Game :: playEvolve ::      Species Count: %lu", (unsigned long)[population.allSpecies count]);
-        for (Species* s in population.allSpecies) {
-            NSLog(@"Species Info :: Count: %lu", [s.speciesOrganisms count]);
+        for (int j = 0; j < population.allSpecies.count; j++) {
+            Species* s = [population.allSpecies objectAtIndex:j];
+            NSLog(@"Species Info - %d :: Count: %lu", j, [s.speciesOrganisms count]);
             NSLog(@"\t      Fittest Fitness: %1.3f", s.fittestOrganism.fitness);
             NSLog(@"\t                  Age: %i", s.age);
             NSLog(@"\tAge Since Improvement: %i", s.ageSinceImprovement);
             for(Organism* ooo in s.speciesOrganisms) {
-                NSLog(@"\t\t      Fitnest: %1.3f", ooo.fitness);
+                NSLog(@"\t\t      Fitness: %1.3f :: Simularity: %1.3f", ooo.fitness, [s.fittestOrganism.genome similarityScoreWithGenome:ooo.genome]);
             }
         }
         
@@ -175,13 +128,13 @@
             while (gameOver == NO) {
                 gameScreen = [screen takeScreenshot];
                 
-                gameOver = [msPacman isGameOver:gameScreen];
-                if(logLevel >= 3) {
-                    NSLog(@"Game Over: %@", ([msPacman isGameOver:gameScreen] == 0 ? @"No" : @"Yes"));
-                }
-                if(gameOver) {
-                    break;
-                }
+                //gameOver = [msPacman isGameOver:gameScreen];
+                //if(logLevel >= 3) {
+                //    NSLog(@"Game Over: %@", (gameOver == 0 ? @"No" : @"Yes"));
+                //}
+                //if(gameOver) {
+                //    break;
+                //}
                 
                 ready = [msPacman isReady:gameScreen];
                 if(ready) {
@@ -196,16 +149,16 @@
                 play = TRUE;
                 
                 //score = [msPacman getScore:gameScreen];
-                score = [msPacman getPelletsEaten:gameScreen];
-                if(logLevel >= 3) {
-                    NSLog(@"Current Score: %ld", score);
-                }
+                //score = [msPacman getPelletsEaten:gameScreen];
+                //if(logLevel >= 3) {
+                //    NSLog(@"Current Score: %ld", score);
+                //}
                 
-                NSDate *methodStart;
-                NSDate *methodFinish;
-                if(logLevel >= 4) {
-                    methodStart = [NSDate date];
-                }
+                //NSDate *methodStart;
+                //NSDate *methodFinish;
+                //if(logLevel >= 4) {
+                //    methodStart = [NSDate date];
+                //}
                 inputs = [msPacman getInputValues:gameScreen];
                 CGImageRelease(gameScreen);
                 //NSString* ssss = @"";
@@ -215,16 +168,14 @@
                 //}
                 //NSLog(@"%@", ssss);
                 
-                if(logLevel >= 4) {
-                    methodFinish = [NSDate date];
-                    NSTimeInterval executionTime = [methodFinish timeIntervalSinceDate:methodStart];
-                    NSLog(@"executionTime = %f", executionTime);
-                }
+                //if(logLevel >= 4) {
+                //    methodFinish = [NSDate date];
+                //    NSTimeInterval executionTime = [methodFinish timeIntervalSinceDate:methodStart];
+                //    NSLog(@"executionTime = %f", executionTime);
+                //}
                 
                 NSArray* output = [nextOrganism predict:inputs];
-                if([output count] == 4) {
-                    NSLog(@"Prediction: [%1.4f] [%1.4f] [%1.4f] [%1.4f]", [output[0] doubleValue], [output[1] doubleValue], [output[2] doubleValue], [output[3] doubleValue]);
-                }
+                
                 int argmax = -1;
                 double val = 0;
                 for(int i = 0; i < output.count; i++) {
@@ -234,30 +185,51 @@
                     }
                 }
                 
+                NSString* str = @"";
                 switch (argmax) {
                     case 0:
-                        if(msPacman.canGoUp) {
-                            NSLog(@"Send: Up");
-                            [keyboard sendKey:kHIDUsage_KeyboardUpArrow];
-                        }
+                        str = @"Up";
                         break;
                     case 1:
-                        if(msPacman.canGoRight) {
-                            NSLog(@"Send: Right");
-                            [keyboard sendKey:kHIDUsage_KeyboardRightArrow];
-                        }
+                        str = @"Right";
                         break;
                     case 2:
-                        if(msPacman.canGoDown) {
-                            NSLog(@"Send: Down");
-                            [keyboard sendKey:kHIDUsage_KeyboardDownArrow];
-                        }
+                        str = @"Down";
                         break;
                     case 3:
-                        if(msPacman.canGoLeft) {
-                            NSLog(@"Send: Left");
+                        str = @"Left";
+                        break;
+                }
+                
+                if([output count] == 4) {
+                    NSLog(@"Prediction: %@ : [%1.4f] [%1.4f] [%1.4f] [%1.4f]", str,
+                          [output[0] doubleValue], [output[1] doubleValue], [output[2] doubleValue], [output[3] doubleValue]);
+                }
+                
+                switch (argmax) {
+                    case 0:
+                        //if(msPacman.canGoUp) {
+                            //NSLog(@"Send: Up");
+                            [keyboard sendKey:kHIDUsage_KeyboardUpArrow];
+                        //}
+                        break;
+                    case 1:
+                        //if(msPacman.canGoRight) {
+                            //NSLog(@"Send: Right");
+                            [keyboard sendKey:kHIDUsage_KeyboardRightArrow];
+                        //}
+                        break;
+                    case 2:
+                        //if(msPacman.canGoDown) {
+                            //NSLog(@"Send: Down");
+                            [keyboard sendKey:kHIDUsage_KeyboardDownArrow];
+                        //}
+                        break;
+                    case 3:
+                        //if(msPacman.canGoLeft) {
+                            //NSLog(@"Send: Left");
                             [keyboard sendKey:kHIDUsage_KeyboardLeftArrow];
-                        }
+                        //}
                         break;
                 }
                 
@@ -290,12 +262,12 @@
         
         //Save the old population with the scores; overwrite if already there
         [Population saveToFile:population filename:populationFilename];
-        [Population saveToHtml:population directory:path populationId:[NSString stringWithFormat:@"%d", population.generation]];
+        //[Population saveToHtml:population directory:path populationId:[NSString stringWithFormat:@"%d", population.generation]];
         
         NSLog(@"Game :: playEvolve :: EVOLVE - GEN(%d)", i + 1);
         [population evolvePopulation];
-        
         //Generation moves up one after evolution
+        
         //Save the new population as bookmark
         populationFilename = [NSString stringWithFormat:@"%@/gen-%i.pop", path, population.generation];
         [Population saveToFile:population filename:populationFilename];

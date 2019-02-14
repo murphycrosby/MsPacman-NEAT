@@ -224,7 +224,7 @@
         if(numberToCreate > [Parameters populationSize]) {
             numberToCreate = [Parameters populationSize];
         }
-        NSArray* newGeneration = [nextSpecies spawnOrganisms:numberToCreate];
+        NSArray* newGeneration = [nextSpecies spawnOrganisms:numberToCreate fittestEver:fittestOrganismEver];
         [allOrganisms addObjectsFromArray:newGeneration];
     }
     // this was fixed
@@ -235,7 +235,7 @@
         if (speciesIndex <= [allSpecies count]) {
             speciesIndex = 0;
         }
-        NSArray* newGeneration = [nextSpecies spawnOrganisms:1];
+        NSArray* newGeneration = [nextSpecies spawnOrganisms:1 fittestEver:fittestOrganismEver];
         [allOrganisms addObjectsFromArray:newGeneration];
     }
     generation++;

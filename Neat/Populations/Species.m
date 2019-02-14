@@ -114,25 +114,59 @@ static int speciesCounter = 0;
     return numToSpawn;
 }
 
--(NSArray*) spawnOrganisms: (int) numToSpawn {
+-(NSArray*) spawnOrganisms: (int) numToSpawn fittestEver: (Organism*) fittest; {
     NSMutableArray* newOrganisms = [[NSMutableArray alloc] init];
     
     [speciesOrganisms sortUsingSelector:@selector(compareFitnessWith:)];
     
     //[newOrganisms addObject:fittestOrganism];
+    [newOrganisms addObject:[fittestOrganism copy]];
     
     int survivingOrganisms = [speciesOrganisms count] * [Parameters speciesPercentOrganismsSurvive];
     if (survivingOrganisms < 1) {
         survivingOrganisms = 1;
     }
+    if(survivingOrganisms > numToSpawn) {
+        survivingOrganisms = numToSpawn;
+    }
     
+    //Put back the top few and mutate
     for(int i = 0; i < survivingOrganisms; i++) {
         Organism* survivor = [speciesOrganisms objectAtIndex:i];
         Organism* childOrganism = [survivor reproduceChildOrganism];
         [newOrganisms addObject:childOrganism];
     }
     
-    for (int i = 1; i < numToSpawn; i++) {
+    //Reproduce with the top few
+    for(int i = 0; i < survivingOrganisms; i++) {
+        //Organism* dadOrganism = [speciesOrganisms objectAtIndex:(arc4random() % survivingOrganisms)];
+        Organism* dadOrganism;
+        Organism* mumOrganism = [speciesOrganisms objectAtIndex:(arc4random() % survivingOrganisms)];
+        if([mumOrganism.genome similarityScoreWithGenome:fittest.genome] < [Parameters speciesCompatibilityThreshold]) {
+            dadOrganism = [fittest copy];
+        } else {
+            dadOrganism = [speciesOrganisms objectAtIndex:(arc4random() % survivingOrganisms)];
+        }
+        
+        if (mumOrganism.fitness > dadOrganism.fitness) {
+            Organism* swapOrganism = dadOrganism;
+            dadOrganism = mumOrganism;
+            mumOrganism = swapOrganism;
+        }
+        if (dadOrganism == mumOrganism || randomDouble() < [Parameters mutateWeightOnlyDontCrossover]) {
+            Organism* childOrganism = [dadOrganism reproduceChildOrganism];
+            [newOrganisms addObject:childOrganism];
+        }
+        else {
+            Organism* childOrganism = [dadOrganism reproduceChildOrganismWithOrganism: mumOrganism];
+            [newOrganisms addObject:childOrganism];
+        }
+    }
+    
+    //Reproduce the top few with the bottom few
+    long count = numToSpawn - [newOrganisms count];
+    NSLog(@"%lu", count);
+    for (int i = 1; i <= count; i++) {
         Organism* dadOrganism = [speciesOrganisms objectAtIndex:(arc4random() % survivingOrganisms)];
         int idx = 0;
         while(idx < survivingOrganisms) {
@@ -154,26 +188,7 @@ static int speciesCounter = 0;
             [newOrganisms addObject:childOrganism];
         }
     }
-    /*
-    for (int i = 1; i < numToSpawn; i++) {
-        Organism* dadOrganism = [speciesOrganisms objectAtIndex:(arc4random() % survivingOrganisms)];
-        Organism* mumOrganism = [speciesOrganisms objectAtIndex:(arc4random() % survivingOrganisms)];
-        //blantent sexism right here
-        if (mumOrganism.fitness > dadOrganism.fitness) {
-            Organism* swapOrganism = dadOrganism;
-            dadOrganism = mumOrganism;
-            mumOrganism = swapOrganism;
-        }
-        if (dadOrganism == mumOrganism || randomDouble() < [Parameters mutateWeightOnlyDontCrossover]) {
-            Organism* childOrganism = [dadOrganism reproduceChildOrganism];
-            [newOrganisms addObject:childOrganism];
-        }
-        else {
-            Organism* childOrganism = [dadOrganism reproduceChildOrganismWithOrganism: mumOrganism];
-            [newOrganisms addObject:childOrganism];
-        }
-    }
-    */
+    
     return newOrganisms;
 }
 
