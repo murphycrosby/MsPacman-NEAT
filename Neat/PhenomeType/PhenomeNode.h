@@ -20,8 +20,8 @@
 
 @property int nodeID;
 @property NodeType nodeType;
-@property (retain) NSMutableArray* incomingPhenoLinks;
-@property (retain) NSMutableArray* outgoingPhenoLinks;
+@property (strong) NSMutableArray* incomingPhenoLinks;
+@property (strong) NSMutableArray* outgoingPhenoLinks;
 @property double activationValue;
 @property BOOL activated;
 

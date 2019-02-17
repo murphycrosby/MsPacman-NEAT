@@ -14,7 +14,7 @@
 
 @synthesize logLevel;
 
-- (id)init: (int) logLvl {
+- (id)init:(NSString*) workingDir logLevel:(int) logLvl {
     self = [super init];
     if (!self) {
         return self;
@@ -32,7 +32,6 @@
     CFArrayApplyFunction(windowList, CFRangeMake(0, CFArrayGetCount(windowList)), &WindowListApplierFunction, (__bridge void*)(windowListData));
     CFRelease(windowList);
     
-    NSString *path = @"/Users/murphycrosby/Misc/Results-1/";
     NSString *filename = @"screenshot-";
     NSString *type = @".png";
     
@@ -40,17 +39,17 @@
         window = windowListData.outputArray[j];
         windowID = [window[kWindowIDKey] unsignedIntValue];
         
-        NSString *dest = [NSString stringWithFormat:@"%@%@%i%@", path, filename, j, type];
+        NSString *dest = [NSString stringWithFormat:@"%@%@%i%@", workingDir, filename, j, type];
         CFURLRef url = (__bridge CFURLRef)[NSURL fileURLWithPath:dest];
         
         CGImageRef windowImage = [self takeScreenshot];
         CGImageDestinationRef destination = CGImageDestinationCreateWithURL(url, kUTTypePNG, 1, NULL);
         if (!destination) {
-            NSLog(@"Screenshot :: init :: Failed to create CGImageDestination for %@", path);
+            NSLog(@"Screenshot :: init :: Failed to create CGImageDestination for %@", workingDir);
         } else {
             CGImageDestinationAddImage(destination, windowImage, nil);
             if (!CGImageDestinationFinalize(destination)) {
-                NSLog(@"Screenshot :: init :: Failed to write image to %@", path);
+                NSLog(@"Screenshot :: init :: Failed to write image to %@", workingDir);
             }
         }
         CGImageRelease(windowImage);
@@ -91,6 +90,10 @@
 }
 
 - (void)dealloc {
+    kWindowIDKey = nil;
+    kWindowBounds = nil;
+    window = nil;
+    
     if(logLevel >= 1) {
         NSLog(@"Screenshot :: dealloc :: Complete\n");
     }

@@ -14,24 +14,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface Game : NSObject {
-    //Keyboard* keyboard;
-    //Screenshot* screen;
-    //MsPacman* msPacman;
-    //dispatch_queue_t queue;
-    //dispatch_source_t sighandler;
-    //int logLevel;
 }
 
-//@property (nonatomic,assign) BOOL exitLoop;
-@property (nonatomic,retain) Keyboard* keyboard;
-@property (nonatomic,retain) Screenshot* screen;
-@property (nonatomic,retain) MsPacman* msPacman;
-//@property (nonatomic,strong) dispatch_source_t sighandler;
+@property (nonatomic,strong) Keyboard* keyboard;
+@property (nonatomic,strong) Screenshot* screen;
+@property (nonatomic,strong) MsPacman* msPacman;
 @property (nonatomic,readwrite) int logLevel;
 
-- (id)init: (int)logLvl;
-- (void) playEvolve;
-- (void) playBest;
+- (id)init:(NSString*) workingDirectory logLevel:(int)logLvl;
+- (void) playEvolve:(NSString*) workingDir populationFile:(NSString*) populationFile;
+- (void) playBest:(NSString*) workingDir populationFile:(NSString*) populationFile;
 
 @end
 

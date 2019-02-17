@@ -135,4 +135,10 @@
     outgoingPhenoLinks = nil;
 }
 
+-(void) dealloc {
+    incomingPhenoLinks = nil;
+    outgoingPhenoLinks = nil;
+
+}
+
 @end

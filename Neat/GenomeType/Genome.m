@@ -101,6 +101,8 @@ static bool genesisOccurred = false;
     NSAssert (!genesisOccurred, @"Genesis cannot occur more than once! "
               "This would really screw up the innovation database. "
               "Instead create once and duplicate");
+    
+    //NSLog(@"Genome :: createGenome :: start");
     genesisOccurred = true;
     
     Genome* newGenome = [[Genome alloc] init];
@@ -130,21 +132,7 @@ static bool genesisOccurred = false;
         [[InnovationDb sharedDb] insertNewNode:outputNode fromNode:0 toNode:0];
     }
     
-    for (int i = 0; i < nInputs; i++) {
-        for (int j = 0; j < nOutputs; j++) {
-            GenomeNode* fNode = [newGenome.genoNodes objectAtIndex:i];
-            GenomeNode* tNode = [newGenome.genoNodes objectAtIndex:nInputs + j];
-            
-            double d = randomClampedDouble();
-            GenomeLink* newGenoLink = [[GenomeLink alloc] initNewlyInnovatedLinkFromNode: fNode.nodeID
-                                                                                   toNode: tNode.nodeID
-                                                                        withWeight:d];
-            
-            [newGenome.genoLinks addObject:newGenoLink];
-            [[InnovationDb sharedDb] insertNewLink:newGenoLink fromNode:fNode.nodeID toNode:tNode.nodeID];
-        }
-    }
-    
+    //NSLog(@"Genome :: createGenome :: complete");
     return newGenome;
 }
 
@@ -315,7 +303,7 @@ static bool genesisOccurred = false;
 
 -(void) perturbAllLinkWeights {
     for (GenomeLink* nextLink in genoLinks) {
-        if (randomDouble() > [Parameters mutationProbabilityUpdateWeight]) {
+        if (randomDouble() < [Parameters mutationProbabilityUpdateWeight]) {
             continue;
         }
         
@@ -414,34 +402,83 @@ static bool genesisOccurred = false;
     }
 }
 
+-(void) addStarterLink {
+    NSMutableArray* inputNodes = [[NSMutableArray alloc] init];
+    NSMutableArray* outputNodes = [[NSMutableArray alloc] init];
+    
+    for (GenomeNode* node in genoNodes) {
+        if(node.nodeType == INPUT) {
+            [inputNodes addObject:node];
+        } else if(node.nodeType == OUTPUT) {
+            [outputNodes addObject:node];
+        }
+    }
+    
+    GenomeNode* randomFromNode = [inputNodes objectAtIndex:arc4random() % [inputNodes count]];
+    GenomeNode* randomToNode = [outputNodes objectAtIndex:arc4random() % [outputNodes count]];;
+    
+    GenomeLink* existingLink = [[InnovationDb sharedDb]
+                                possibleLinkExistsFromNode:randomFromNode.nodeID
+                                toNode:randomToNode.nodeID];
+    
+    if (existingLink == nil) {
+        //create a new link
+        GenomeLink* newGenoLink = [[GenomeLink alloc] initNewlyInnovatedLinkFromNode: randomFromNode.nodeID
+                                                                              toNode: randomToNode.nodeID
+                                                                          withWeight:randomClampedDouble()];
+        [genoLinks addObject:newGenoLink];
+        
+        // we can be sure this is a new link so add to innovation database
+        [[InnovationDb sharedDb] insertNewLink:newGenoLink fromNode:randomFromNode.nodeID toNode:randomToNode.nodeID];
+    }
+    else {
+        [genoLinks addObject:existingLink];
+    }
+}
+
 -(void) addLink {
     // select 2 nodes at random
-    GenomeNode* randomFromNode = [genoNodes objectAtIndex:arc4random() % [genoNodes count]];
-    GenomeNode* randomToNode = [genoNodes objectAtIndex:arc4random() % [genoNodes count]];
+    GenomeNode* randomFromNode = nil;
+    GenomeNode* randomToNode = nil;
     
     // make sure the link is valid
+    int count = 0;
+    BOOL linkIsValid = FALSE;
+    while (linkIsValid == FALSE && count < 10) {
+        randomFromNode = [genoNodes objectAtIndex:arc4random() % [genoNodes count]];
+        randomToNode = [genoNodes objectAtIndex:arc4random() % [genoNodes count]];
+        
+        // cannot link to itself
+        if (randomFromNode == randomToNode) {
+            count++;
+            continue;
+        }
+        // cannot link to an input or bias
+        if (randomToNode.nodeType == INPUT || randomToNode.nodeType == BIAS) {
+            count++;
+            continue;
+        }
+        // do not link if already linked
+        if ([self getLinkFromToNodeID:randomFromNode.nodeID toNodeID:randomToNode.nodeID] != nil) {
+            count++;
+            continue;
+        }
+        // do not link if links backwards in the network
+        //if (randomFromNode.nodePosition.y > randomToNode.nodePosition.y) {
+        //    return;
+        //}
+        // cannot create a link where there is a reverse link existing
+        if ([self getLinkFromToNodeID:randomToNode.nodeID toNodeID:randomFromNode.nodeID] != nil) {
+            count++;
+            continue;
+        }
+        
+        linkIsValid = TRUE;
+    }
     
-    // cannot link to itself
-    if (randomFromNode == randomToNode) {
+    if(linkIsValid == FALSE) {
         return;
     }
-    // cannot link to an input or bias
-    if (randomToNode.nodeType == INPUT || randomToNode.nodeType == BIAS) {
-        return;
-    }
-    // do not link if already linked
-    if ([self getLinkFromToNodeID:randomFromNode.nodeID toNodeID:randomToNode.nodeID] != nil) {
-        return;
-    }
-    // do not link if links backwards in the network
-    //if (randomFromNode.nodePosition.y > randomToNode.nodePosition.y) {
-    //    return;
-    //}
-    // cannot create a link where there is a reverse link existing
-    if ([self getLinkFromToNodeID:randomToNode.nodeID toNodeID:randomFromNode.nodeID] != nil) {
-        return;
-    }
-    
     // all clear - we can link these nodes
     
     // check to see if the link already exists in the innovation DB
@@ -467,14 +504,7 @@ static bool genesisOccurred = false;
     if (genoNodes.count < [Parameters maximumNeurons] &&
         randomDouble() < [Parameters chanceAddNode]) {
         NSLog(@"Genome :: mutateGenome :: addNode");
-        int count = arc4random_uniform(5);
-        while(count == 0) {
-            count = arc4random_uniform(5);
-        }
-        NSLog(@"Genome :: mutateGenome :: addNode :: %d", count);
-        for(int i = 0; i < count; i++) {
-            [self addNode];
-        }
+        [self addNode];
     } else if (randomDouble() < [Parameters chanceAddLink]) {
         NSLog(@"Genome :: mutateGenome :: addLink");
         [self addLink];
@@ -493,6 +523,15 @@ static bool genesisOccurred = false;
 
 -(Genome*) offspringWithGenome: (Genome*) mumGenome {
     Genome* childGenome = [[Genome alloc] init];
+    
+    //Copy Input, Bias, and Output Nodes
+    for(GenomeNode* node in genoNodes) {
+        if(node.nodeType == INPUT
+           || node.nodeType == BIAS
+           || node.nodeType == OUTPUT) {
+             [childGenome.genoNodes addObject: [node copy]];
+        }
+    }
     
     [genoLinks sortUsingSelector:@selector(compareIDWith:)];
     [mumGenome.genoLinks sortUsingSelector:@selector(compareIDWith:)];
@@ -688,9 +727,9 @@ static bool genesisOccurred = false;
     
     double longest = MAX([genoLinks count], [otherGenome.genoLinks count]);
     
-    double excessScore = ([Parameters c1ExcessCoefficient] * excessLinks) / longest;
-    double disjointScore = ([Parameters c2DisjointCoefficient] * disjointLinks) / longest;
-    double weightScore = ([Parameters c3weightCoefficient] * weightDifference) / matchingLinks;
+    double excessScore = (longest == 0) ? 0 : ([Parameters c1ExcessCoefficient] * excessLinks) / longest;
+    double disjointScore = (longest == 0) ? 0 : ([Parameters c2DisjointCoefficient] * disjointLinks) / longest;
+    double weightScore = (matchingLinks == 0) ? 0 : ([Parameters c3weightCoefficient] * weightDifference) / matchingLinks;
     
     double score = excessScore + disjointScore + weightScore;
     return score;

@@ -386,4 +386,9 @@
     return self;
 }
 
+-(void) dealloc {
+    level1Rects = nil;
+    level1Pellets = nil;
+}
+
 @end

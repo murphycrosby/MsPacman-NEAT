@@ -10,17 +10,13 @@
 #define Genome_h
 
 #import <Foundation/Foundation.h>
-//@class ONNetwork;
 
 @interface Genome : NSObject<NSCopying, NSSecureCoding> {
-    //int genomeID;
-    //NSMutableArray* genoNodes;
-    //NSMutableArray* genoLinks;
 }
 
 @property int genomeID;
-@property (retain) NSMutableArray* genoNodes;
-@property (retain) NSMutableArray* genoLinks;
+@property (strong) NSMutableArray* genoNodes;
+@property (strong) NSMutableArray* genoLinks;
 
 +(Genome*) createGenome: (int) nInputs outputs: (int) nOutputs;
 +(void) balanceGenome:(Genome*) genome;
@@ -31,6 +27,7 @@
 -(void) reEnableRandomLink;
 -(void) toggleRandomLink;
 -(void) addNode;
+-(void) addStarterLink;
 -(void) addLink;
 -(Genome*) mutateGenome;
 -(Genome*) offspringWithGenome: (Genome*) mumGenome;

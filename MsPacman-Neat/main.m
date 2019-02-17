@@ -27,9 +27,53 @@ int main(int argc, const char* argv[]) {
         sigIntHandler.sa_flags = 0;
         sigaction(SIGINT, &sigIntHandler, NULL);
         
-        g = [[Game alloc] init:2];
-        if(g) {
-            [g playEvolve];
+        int play = 0;
+        NSFileManager* fileManager = [NSFileManager defaultManager];
+        NSString* populationFile = @"";
+        NSString* workingDir = @"";
+        for(int i = 1; i < argc; i++) {
+            NSString *s = [[NSString stringWithFormat:@"%s", argv[i]] lowercaseString];
+            
+            if([s isEqualToString:@"playevolve"]) {
+                play = 0;
+            } else if([s isEqualToString:@"playbest"]) {
+                play = 1;
+            } else {
+                s = [NSString stringWithFormat:@"%s", argv[i]];
+                BOOL isDir;
+                if ([fileManager fileExistsAtPath:s isDirectory:&isDir] && !isDir) {
+                    populationFile = s;
+                    workingDir = [[populationFile stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
+                }
+                if([fileManager fileExistsAtPath:s isDirectory:&isDir] && isDir){
+                    workingDir = s;
+                }
+            }
+        }
+        
+        if([workingDir isEqualToString:@""]) {
+            workingDir = @"/users/murphycrosby/misc/";
+        }
+        NSLog(@"main :: Working Directory: %@", workingDir);
+        NSLog(@"main ::   Population File: %@", populationFile);
+         
+        g = [[Game alloc] init:workingDir logLevel:2];
+        if(!g) {
+            NSLog(@"main :: A game could not be allocated.");
+            return 1;
+        }
+         
+        switch (play) {
+            case 0:
+                NSLog(@"main :: Playing and Evolving");
+                [g playEvolve:workingDir populationFile:populationFile];
+                break;
+            case 1:
+                NSLog(@"main :: Playing the best Organism");
+                [g playBest:workingDir populationFile:populationFile];
+                break;
+            default:
+                break;
         }
         g = nil;
         

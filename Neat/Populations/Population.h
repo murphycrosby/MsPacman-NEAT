@@ -14,9 +14,6 @@
 @class Genome;
 
 @interface Population : NSObject <NSSecureCoding> {
-    //NSMutableArray* allOrganisms;
-    //NSMutableArray* allSpecies;
-    //int generation;
 }
 
 @property (strong, nonatomic) NSMutableArray* allOrganisms;
@@ -29,7 +26,7 @@
 +(void) saveToHtml: (Population*) population directory: (NSString*) directory populationId: (NSString*) populationId;
 +(void) saveToFile: (Population*) population filename: (NSString*) filename;
 +(Population*) loadFromFile: (NSString*) filename;
-+(Population*) spawnInitialGenerationFromGenome: (Genome*) genesisGenome generation:(int) generation fitness:(double) fitness;
++(Population*) spawnInitialGenerationFromGenome: (Genome*) genesisGenome;
 
 @end
 

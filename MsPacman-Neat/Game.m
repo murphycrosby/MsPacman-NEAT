@@ -29,7 +29,7 @@
 @synthesize screen;
 @synthesize msPacman;
 
-- (id) init: (int) logLvl
+- (id) init:(NSString*) workingDir logLevel:(int) logLvl
 {
     self = [super init];
     
@@ -40,8 +40,8 @@
     }
     
     keyboard = [[Keyboard alloc] init:1];
-    screen = [[Screenshot alloc] init:1];
-    msPacman = [[MsPacman alloc] init:1];
+    screen = [[Screenshot alloc] init:workingDir logLevel:1];
+    msPacman = [[MsPacman alloc] init:workingDir logLevel:1];
     
     int seed = 0;
     if (seed == 0) {
@@ -54,10 +54,10 @@
     return self;
 }
 
-- (void) playEvolve {
+- (void) playEvolve:(NSString*) workingDir populationFile:(NSString*) populationFile {
     NSFileManager* fileManager = [NSFileManager defaultManager];
     CGImageRef gameScreen = nil;
-    NSMutableArray* inputs;
+    NSArray* inputs;
     Population* population;
     int generation = 1;
     long score = 0;
@@ -68,11 +68,9 @@
         NSLog(@"Game :: playEvolve :: start");
     }
     
-    NSString* pop_file = @"/Users/murphycrosby/Misc/Results-1/gen-157.pop";
     NSString* org_file = @"";
-    
-    if ([fileManager fileExistsAtPath:pop_file]) {
-        population = [Population loadFromFile:pop_file];
+    if ([fileManager fileExistsAtPath:populationFile]) {
+        population = [Population loadFromFile:populationFile];
         generation = population.generation;
     }
      else {
@@ -83,13 +81,25 @@
             genome = organism.genome;
             fitness = organism.fitness;
         } else {
-            //genome = [Genome createGenome:366 outputs:4];
-            genome = [Genome createGenome:80 outputs:4];
+            genome = [Genome createGenome:60 outputs:4];
         }
         
-        population = [Population spawnInitialGenerationFromGenome:genome generation:generation fitness:fitness];
+        population = [Population spawnInitialGenerationFromGenome:genome];
     }
-    
+
+    /*
+    for (int i = 0; i < population.allOrganisms.count; i++) {
+        Organism* o1 = [population.allOrganisms objectAtIndex:i];
+        for (int j = 0; j < population.allOrganisms.count; j++) {
+            Organism* o2 = [population.allOrganisms objectAtIndex:j];
+            if([o1 isEqual:o2]) {
+                continue;
+            }
+            NSLog(@"i:%d j:%d === %f",i,j,[o1.genome similarityScoreWithGenome:o2.genome]);
+        }
+    }
+    return;
+    */
     NSLog(@"Innovation: GenomeNodeID: %i, InnovationID: %i", [InnovationDb getGenomeNodeID], [InnovationDb getInnovationID]);
     
     if(logLevel >= 3) {
@@ -117,6 +127,7 @@
             Organism* nextOrganism = [population.allOrganisms objectAtIndex:o];
             NSLog(@" ");
             NSLog(@"Game :: playEvolve :: Organism (%i of %lu) :: Generation: %i", o + 1, (unsigned long)[population.allOrganisms count], i);
+            NSLog(@"Game :: playEvolve :: Organism :: Nodes: %lu :: Links: %lu", (unsigned long)[nextOrganism.genome.genoNodes count], (unsigned long)[nextOrganism.genome.genoLinks count]);
             
             [nextOrganism developNetwork];
             [keyboard sendKey:kHIDUsage_KeyboardA];
@@ -208,28 +219,16 @@
                 
                 switch (argmax) {
                     case 0:
-                        //if(msPacman.canGoUp) {
-                            //NSLog(@"Send: Up");
-                            [keyboard sendKey:kHIDUsage_KeyboardUpArrow];
-                        //}
+                        [keyboard sendKey:kHIDUsage_KeyboardUpArrow];
                         break;
                     case 1:
-                        //if(msPacman.canGoRight) {
-                            //NSLog(@"Send: Right");
-                            [keyboard sendKey:kHIDUsage_KeyboardRightArrow];
-                        //}
+                        [keyboard sendKey:kHIDUsage_KeyboardRightArrow];
                         break;
                     case 2:
-                        //if(msPacman.canGoDown) {
-                            //NSLog(@"Send: Down");
-                            [keyboard sendKey:kHIDUsage_KeyboardDownArrow];
-                        //}
+                        [keyboard sendKey:kHIDUsage_KeyboardDownArrow];
                         break;
                     case 3:
-                        //if(msPacman.canGoLeft) {
-                            //NSLog(@"Send: Left");
-                            [keyboard sendKey:kHIDUsage_KeyboardLeftArrow];
-                        //}
+                        [keyboard sendKey:kHIDUsage_KeyboardLeftArrow];
                         break;
                 }
                 
@@ -255,10 +254,9 @@
         //We want to keep track of the best from each generation
         Organism* best = [population bestFitness];
         NSLog(@"Game :: playEvolve :: Best Fitness: %1.0f", best.fitness);
-        [self writeTracking:i score:best.fitness];
+        [self writeTracking:workingDir generation:i score:best.fitness];
         
-        NSString* path = @"/Users/murphycrosby/Misc/Results-1/";
-        NSString* populationFilename = [NSString stringWithFormat:@"%@/gen-%i.pop", path, population.generation];
+        NSString* populationFilename = [NSString stringWithFormat:@"%@/gen-%i.pop", workingDir, population.generation];
         
         //Save the old population with the scores; overwrite if already there
         [Population saveToFile:population filename:populationFilename];
@@ -269,7 +267,7 @@
         //Generation moves up one after evolution
         
         //Save the new population as bookmark
-        populationFilename = [NSString stringWithFormat:@"%@/gen-%i.pop", path, population.generation];
+        populationFilename = [NSString stringWithFormat:@"%@/gen-%i.pop", workingDir, population.generation];
         [Population saveToFile:population filename:populationFilename];
         
         NSLog(@"Game :: playEvolve :: Fittest Organism: %1.3f", population.fittestOrganismEver.fitness);
@@ -278,9 +276,114 @@
     NSLog(@"Game :: playEvolve :: Complete");
 }
 
--(void) writeTracking:(int) generation score:(int) score {
+-(void) playBest:(NSString*) workingDir populationFile:(NSString*) populationFile {
     NSFileManager* fileManager = [NSFileManager defaultManager];
-    NSString* tracking = @"/Users/murphycrosby/Misc/Results-1/generation_tracking.csv";
+    CGImageRef gameScreen = nil;
+    NSArray* inputs;
+    Population* population;
+    int generation = 1;
+    long score = 0;
+    BOOL gameOver = NO;
+    BOOL ready = NO;
+    
+    if(logLevel >= 3) {
+        NSLog(@"Game :: playBest :: start");
+    }
+    
+    if ([fileManager fileExistsAtPath:populationFile]) {
+        population = [Population loadFromFile:populationFile];
+        generation = population.generation;
+    } else {
+        NSLog(@"Game :: playBest :: No population file provided. Exiting.");
+        return;
+    }
+    
+    Organism* best = population.fittestOrganismEver;
+    NSLog(@" ");
+    NSLog(@"Game :: playBest :: Organism :: Generation: %i :: Fitness: %1.3f", population.generation + 1, best.fitness);
+    
+    [best developNetwork];
+    [keyboard sendKey:kHIDUsage_KeyboardA];
+    [NSThread sleepForTimeInterval:1.0f];
+    
+    score = 0;
+    gameOver = NO;
+    BOOL play = FALSE;
+    
+    while (gameOver == NO) {
+        gameScreen = [screen takeScreenshot];
+        
+        gameOver = [msPacman isGameOver:gameScreen];
+        if(gameOver) {
+            break;
+        }
+        
+        ready = [msPacman isReady:gameScreen];
+        if(ready) {
+            [NSThread sleepForTimeInterval:0.3f];
+            NSLog(@"Ready");
+            if(!play) {
+                continue;
+            }
+        }
+        play = TRUE;
+        
+        inputs = [msPacman getInputValues:gameScreen];
+        CGImageRelease(gameScreen);
+        
+        NSArray* output = [best predict:inputs];
+        
+        int argmax = -1;
+        double val = 0;
+        for(int i = 0; i < output.count; i++) {
+            if ([output[i] doubleValue] > val) {
+                val = [output[i] doubleValue];
+                argmax = i;
+            }
+        }
+        
+        NSString* str = @"";
+        switch (argmax) {
+            case 0:
+                str = @"Up";
+                break;
+            case 1:
+                str = @"Right";
+                break;
+            case 2:
+                str = @"Down";
+                break;
+            case 3:
+                str = @"Left";
+                break;
+        }
+        
+        if([output count] == 4) {
+            NSLog(@"Prediction: %@ : [%1.4f] [%1.4f] [%1.4f] [%1.4f]", str,
+                  [output[0] doubleValue], [output[1] doubleValue], [output[2] doubleValue], [output[3] doubleValue]);
+        }
+        
+        switch (argmax) {
+            case 0:
+                [keyboard sendKey:kHIDUsage_KeyboardUpArrow];
+                break;
+            case 1:
+                [keyboard sendKey:kHIDUsage_KeyboardRightArrow];
+                break;
+            case 2:
+                [keyboard sendKey:kHIDUsage_KeyboardDownArrow];
+                break;
+            case 3:
+                [keyboard sendKey:kHIDUsage_KeyboardLeftArrow];
+                break;
+        }
+    }
+    NSLog(@"Game :: playBest :: Complete");
+}
+
+-(void) writeTracking:(NSString*) workingDir generation:(int) generation score:(int) score {
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    NSString* tracking = [workingDir stringByAppendingString:@"generation_tracking.csv"];
     
     if (![fileManager fileExistsAtPath:tracking]) {
         NSString* str = @"generation|fitness\n";
@@ -296,13 +399,10 @@
     [fileHandler closeFile];
 }
 
--(void) playBest {
-    
-}
-
 -(void) dealloc {
     keyboard = nil;
     screen = nil;
+    msPacman = nil;
     
     if(logLevel >= 1) {
         NSLog(@"Game :: dealloc :: Complete\n");

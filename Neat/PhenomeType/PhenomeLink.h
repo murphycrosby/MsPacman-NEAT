@@ -12,14 +12,11 @@
 @class PhenomeNode;
 
 @interface PhenoLink : NSObject {
-    //PhenomeNode* fromNode;
-    //PhenomeNode* toNode;
-    //double weight;
-    //bool isEnabled;
+
 }
 
-@property (retain) PhenomeNode* fromNode;
-@property (retain) PhenomeNode* toNode;
+@property (strong) PhenomeNode* fromNode;
+@property (strong) PhenomeNode* toNode;
 @property double weight;
 @property bool isEnabled;
 

@@ -11,6 +11,8 @@
 
 @implementation WindowListApplierData
 
+@synthesize outputArray;
+
 NSString *kAppNameKey = @"applicationName";
 NSString *kWindowOriginKey = @"windowOrigin";
 NSString *kWindowSizeKey = @"windowSize";
@@ -72,6 +74,10 @@ void WindowListApplierFunction(const void *inputDictionary, void *context)
         data.order++;
         [data.outputArray addObject:outputEntry];
     }
+}
+
+-(void) dealloc {
+    outputArray = nil;
 }
 
 @end

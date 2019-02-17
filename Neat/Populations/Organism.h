@@ -17,8 +17,8 @@
     
 }
 
-@property (retain) Network* network;
-@property (retain) Genome* genome;
+@property (strong) Network* network;
+@property (strong) Genome* genome;
 @property double fitness;
 @property double speciesAdjustedFitness;
 

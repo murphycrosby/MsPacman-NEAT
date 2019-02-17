@@ -210,4 +210,9 @@
     return copiedOrganism;
 }
 
+-(void) dealloc {
+    network = nil;
+    genome = nil;
+}
+
 @end

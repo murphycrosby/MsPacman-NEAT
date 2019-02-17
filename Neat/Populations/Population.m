@@ -24,7 +24,7 @@
     if (self) {
         allOrganisms = [[NSMutableArray alloc] init];
         allSpecies = [[NSMutableArray alloc] init];
-        generation = 0;
+        generation = 1;
     }
     return self;
 }
@@ -224,8 +224,10 @@
         if(numberToCreate > [Parameters populationSize]) {
             numberToCreate = [Parameters populationSize];
         }
-        NSArray* newGeneration = [nextSpecies spawnOrganisms:numberToCreate fittestEver:fittestOrganismEver];
-        [allOrganisms addObjectsFromArray:newGeneration];
+        if(numberToCreate > 0) {
+            NSArray* newGeneration = [nextSpecies spawnOrganisms:numberToCreate fittestEver:fittestOrganismEver];
+            [allOrganisms addObjectsFromArray:newGeneration];
+        }
     }
     // this was fixed
     int speciesIndex = 0;
@@ -241,25 +243,30 @@
     generation++;
 }
 
-+(Population*) spawnInitialGenerationFromGenome:(Genome*) genesisGenome generation:(int) generation fitness:(double) fitness {
++(Population*) spawnInitialGenerationFromGenome:(Genome*) genesisGenome {
+    //NSLog(@"Population :: spawnInitialGenerationFromGenome :: start");
     Population* newPopulation = [[Population alloc] init];
-    newPopulation.generation = generation;
     
-    Organism* firstLife = [[Organism alloc] initWithGenome: genesisGenome];
-    firstLife.fitness = fitness;
-    
-    [newPopulation.allOrganisms addObject:firstLife];
-    
-    int nOrganisms = [Parameters populationSize] - 1;
+    //Organism* firstLife = [[Organism alloc] initWithGenome: genesisGenome];
+    //[newPopulation.allOrganisms addObject:firstLife];
+    //int nOrganisms = [Parameters populationSize] - 1;
+    int nOrganisms = [Parameters populationSize];
     
     for (int i = 0; i < nOrganisms; i++) {
-        Genome* newGenome = [[genesisGenome copy] randomiseWeights];
+        Genome* newGenome = [genesisGenome copy];
+        [newGenome addStarterLink];
         Organism *nextLife = [[Organism alloc] initWithGenome: newGenome];
         
         [newPopulation.allOrganisms addObject:nextLife];
     }
-    
+    //NSLog(@"Population :: spawnInitialGenerationFromGenome :: complete");
     return newPopulation;
+}
+
+-(void) dealloc {
+    allOrganisms = nil;
+    allSpecies = nil;
+    fittestOrganismEver = nil;
 }
 
 @end

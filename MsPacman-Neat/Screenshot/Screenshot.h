@@ -19,7 +19,7 @@
 
 @property (nonatomic) int logLevel;
 
--(id)init: (int) logLvl;
+-(id)init:(NSString*) workingDir logLevel:(int) logLvl;
 -(CGImageRef) takeScreenshot;
 
 @end

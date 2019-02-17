@@ -14,33 +14,21 @@
 @interface MsPacman : NSObject {
     int logLevel;
     Level1* lvl1;
-    
-    NSMutableArray* msPacmanHistory;
-    NSMutableArray* blinkyHistory;
-    NSMutableArray* pinkyHistory;
-    NSMutableArray* inkyHistory;
-    NSMutableArray* sueHistory;
-    NSMutableArray* scaredGhostHistory;
-    
+    NSString* workingDirectory;
 }
 
-@property (nonatomic, assign) CGRect msPacman;
 @property (nonatomic, assign) BOOL canGoUp;
 @property (nonatomic, assign) BOOL canGoRight;
 @property (nonatomic, assign) BOOL canGoDown;
 @property (nonatomic, assign) BOOL canGoLeft;
-@property (nonatomic, assign) CGRect blinky;
-@property (nonatomic, assign) CGRect pinky;
-@property (nonatomic, assign) CGRect inky;
-@property (nonatomic, assign) CGRect sue;
 
--(id)init: (int) logLvl;
+-(id)init:(NSString*) workingDir logLevel:(int) logLvl;
 -(void) saveScreenshot: (CGImageRef) screenshot filename: (NSString*) filename number: (NSString*) num;
 -(BOOL) isGameOver: (CGImageRef) screenshot;
 -(BOOL) isReady: (CGImageRef) screenshot;
 -(long) getScore: (CGImageRef) screenshot;
 -(long) getPelletsEaten: (CGImageRef) screenshot;
--(NSMutableArray*) getInputValues: (CGImageRef) screenshot;
+-(NSArray*) getInputValues: (CGImageRef) screenshot;
 
 @end
 

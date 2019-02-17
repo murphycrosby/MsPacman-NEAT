@@ -18,4 +18,9 @@
             fromNode.nodeID, toNode.nodeID, weight, (isEnabled)?@"":@"(disabled)"];
 }
 
+-(void) dealloc {
+    fromNode = nil;
+    toNode = nil;
+}
+
 @end

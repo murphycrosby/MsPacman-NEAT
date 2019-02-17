@@ -16,7 +16,7 @@
 //#import "ParameterController.h"
 
 @implementation Network
-@synthesize genome, numLinks, numNodes, allNodes, inputNodes, outputNodes;
+@synthesize genome, numLinks, numNodes, allLinks, allNodes, inputNodes, outputNodes;
 
 -(NSString*) description {
     return [NSString stringWithFormat: @"Nodes: %@ Links: %@",
@@ -84,6 +84,7 @@
             }
         }
     }
+    
     return self;
 }
 
@@ -97,12 +98,9 @@
 }
 
 -(void) updateSensors: (NSArray*) inputValuesArray {
-    NSArray* scaledValuesArray = [Network fscale:inputValuesArray min:-3 max:3];
-    
     for (int i = 0; i < [inputNodes count]; i++) {
         PhenomeNode* nextInputNode = [inputNodes objectAtIndex:i];
-        //NSNumber* nextInputValue = [inputValuesArray objectAtIndex:i];
-        NSNumber* nextInputValue = [scaledValuesArray objectAtIndex:i];
+        NSNumber* nextInputValue = [inputValuesArray objectAtIndex:i];
         if (nextInputValue != nil) {
             nextInputNode.activationValue = [nextInputValue doubleValue];
             nextInputNode.activated = TRUE;
@@ -112,12 +110,12 @@
             NSLog(@"Runtime Warning - not enough input parameters to sensors: filling sensor %d with vaue 0.0", i);
         }
     }
-    //if ([inputValuesArray count] > [inputNodes count]) {
-    if ([scaledValuesArray count] > [inputNodes count]) {
+
+    if ([inputValuesArray count] > [inputNodes count]) {
         NSLog(@"Runtime Warning - there are %lu input values but only %lu input sensors in the network: ignoring the extra ones",
-              [scaledValuesArray count], [inputNodes count]);
-              //[inputValuesArray count], [inputNodes count]);
+              [inputValuesArray count], [inputNodes count]);
     }
+    
     for (PhenomeNode* nextPhenoNode in allNodes) {
         if (nextPhenoNode.nodeType == BIAS) {
             nextPhenoNode.activationValue = 1.0;
@@ -128,10 +126,8 @@
 
 -(NSArray*) activateNetwork {
     for (PhenomeNode* nextPhenoNode in allNodes) {
-        //if (nextPhenoNode.nodeType == INPUT || nextPhenoNode.nodeType == BIAS) {
         if (nextPhenoNode.nodeType != INPUT && nextPhenoNode.nodeType != BIAS) {
             //We need to process in order starting from the input layer
-            //[nextPhenoNode activate];
             [nextPhenoNode activateLSTM];
         }
     }
@@ -144,7 +140,7 @@
     }
     NSLog(@"[%1.3f] [%1.3f] [%1.3f] [%1.3f]", [debugArray[0] doubleValue], [debugArray[1] doubleValue], [debugArray[2] doubleValue], [debugArray[3] doubleValue]);
     */
-    [Network fscalePhenoNode:allNodes min:-50 max:50];
+    //[Network fscalePhenoNode:allNodes min:-50 max:50];
     return [Network fsoftmax: allNodes];
 }
 
@@ -153,42 +149,6 @@
         nextPhenoNode.activationValue = 0;
         nextPhenoNode.activated = FALSE;
     }
-}
-
-+(NSArray*) fscale: (NSArray*) nodes min:(int) min max:(int) max {
-    NSMutableArray* arr = [[NSMutableArray alloc] init];
-    double vmin = 0;
-    double vmax = 0;
-    BOOL doScale = FALSE;
-    
-    for (int i = 0; i < nodes.count; i++) {
-        double val = [[nodes objectAtIndex:i] doubleValue];
-        if(val > max
-           || val < min) {
-            doScale = TRUE;
-        }
-        
-        if(val < vmin) {
-            vmin = val;
-        }
-        
-        if(val > vmax) {
-            vmax = val;
-        }
-    }
-    
-    if(!doScale) {
-        return nodes;
-    }
-    
-    double mult = ((max - min) / (vmax - vmin));
-    for (int i = 0; i < nodes.count; i++) {
-        double v = [[nodes objectAtIndex:i] doubleValue];
-        double val = (mult * (v - vmax)) + max;
-        [arr addObject:@(val)];
-    }
-    
-    return arr;
 }
 
 +(void) fscalePhenoNode: (NSArray*) nodes min:(int) min max:(int) max {
@@ -216,6 +176,7 @@
     }
     
     if(!doScale) {
+        NSLog(@"Scaling not hit");
         return;
     }
     
@@ -246,6 +207,14 @@
     }
     
     return outputArray;
+}
+
+-(void) dealloc {
+    genome = nil;
+    allLinks = nil;
+    allNodes = nil;
+    inputNodes = nil;
+    outputNodes = nil;
 }
 
 @end

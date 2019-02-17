@@ -122,7 +122,7 @@ static int speciesCounter = 0;
     //[newOrganisms addObject:fittestOrganism];
     [newOrganisms addObject:[fittestOrganism copy]];
     
-    int survivingOrganisms = [speciesOrganisms count] * [Parameters speciesPercentOrganismsSurvive];
+    long survivingOrganisms = [speciesOrganisms count] * [Parameters speciesPercentOrganismsSurvive];
     if (survivingOrganisms < 1) {
         survivingOrganisms = 1;
     }
@@ -164,28 +164,30 @@ static int speciesCounter = 0;
     }
     
     //Reproduce the top few with the bottom few
-    long count = numToSpawn - [newOrganisms count];
-    NSLog(@"%lu", count);
-    for (int i = 1; i <= count; i++) {
-        Organism* dadOrganism = [speciesOrganisms objectAtIndex:(arc4random() % survivingOrganisms)];
-        int idx = 0;
-        while(idx < survivingOrganisms) {
-            idx = arc4random() % speciesOrganisms.count;
-        }
-        Organism* mumOrganism = [speciesOrganisms objectAtIndex:idx];
-        
-        if (mumOrganism.fitness > dadOrganism.fitness) {
-            Organism* swapOrganism = dadOrganism;
-            dadOrganism = mumOrganism;
-            mumOrganism = swapOrganism;
-        }
-        if (dadOrganism == mumOrganism || randomDouble() < [Parameters mutateWeightOnlyDontCrossover]) {
-            Organism* childOrganism = [dadOrganism reproduceChildOrganism];
-            [newOrganisms addObject:childOrganism];
-        }
-        else {
-            Organism* childOrganism = [dadOrganism reproduceChildOrganismWithOrganism: mumOrganism];
-            [newOrganisms addObject:childOrganism];
+    if(survivingOrganisms > 0) {
+        long count = numToSpawn - [newOrganisms count];
+        //NSLog(@"species :: spawnOrganisms :: species: %lu :: surviving: %lu :: count: %lu = numToSpawn: %d - newOrganisms_count: %lu", speciesOrganisms.count, survivingOrganisms, count, numToSpawn, [newOrganisms count]);
+        for (int i = 1; i <= count; i++) {
+            Organism* dadOrganism = [speciesOrganisms objectAtIndex:(arc4random() % survivingOrganisms)];
+            long idx = arc4random() % speciesOrganisms.count;
+            if(idx + survivingOrganisms < speciesOrganisms.count) {
+                idx = idx + survivingOrganisms;
+            }
+            Organism* mumOrganism = [speciesOrganisms objectAtIndex:idx];
+            
+            if (mumOrganism.fitness > dadOrganism.fitness) {
+                Organism* swapOrganism = dadOrganism;
+                dadOrganism = mumOrganism;
+                mumOrganism = swapOrganism;
+            }
+            if (dadOrganism == mumOrganism || randomDouble() < [Parameters mutateWeightOnlyDontCrossover]) {
+                Organism* childOrganism = [dadOrganism reproduceChildOrganism];
+                [newOrganisms addObject:childOrganism];
+            }
+            else {
+                Organism* childOrganism = [dadOrganism reproduceChildOrganismWithOrganism: mumOrganism];
+                [newOrganisms addObject:childOrganism];
+            }
         }
     }
     
@@ -234,6 +236,11 @@ static int speciesCounter = 0;
     
     NSString* html = [NSString stringWithFormat:@"%@/species-%@.html", newDirectory, speciesId];
     [str writeToFile:html atomically:YES encoding:NSUTF8StringEncoding error:nil];
+}
+
+-(void) dealloc {
+    speciesOrganisms = nil;
+    fittestOrganism = nil;
 }
 
 @end

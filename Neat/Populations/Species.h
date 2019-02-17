@@ -14,15 +14,10 @@
 
 @interface Species : NSObject <NSSecureCoding> {
     int speciesID;
-    //NSMutableArray* speciesOrganisms;
-    //Organism* fittestOrganism;
-    //double speciesFitnessTotal;
-    //int age;
-    //int ageSinceImprovement;
 }
 
-@property (retain) NSMutableArray* speciesOrganisms;
-@property (retain) Organism* fittestOrganism;
+@property (strong) NSMutableArray* speciesOrganisms;
+@property (strong) Organism* fittestOrganism;
 @property int age;
 @property int ageSinceImprovement;
 
