@@ -38,6 +38,10 @@ int main(int argc, const char* argv[]) {
                 play = 0;
             } else if([s isEqualToString:@"playbest"]) {
                 play = 1;
+            } else if([s isEqualToString:@"checkAll"]) {
+                play = 2;
+            } else if([s isEqualToString:@"check"]) {
+                play = 3;
             } else {
                 s = [NSString stringWithFormat:@"%s", argv[i]];
                 BOOL isDir;
@@ -56,8 +60,9 @@ int main(int argc, const char* argv[]) {
         }
         NSLog(@"main :: Working Directory: %@", workingDir);
         NSLog(@"main ::   Population File: %@", populationFile);
-         
-        g = [[Game alloc] init:workingDir logLevel:2];
+        
+        BOOL debug = ((play >= 2) ? TRUE : FALSE);
+        g = [[Game alloc] init:debug workingDir:workingDir logLevel:2];
         if(!g) {
             NSLog(@"main :: A game could not be allocated.");
             return 1;
@@ -71,6 +76,14 @@ int main(int argc, const char* argv[]) {
             case 1:
                 NSLog(@"main :: Playing the best Organism");
                 [g playBest:workingDir populationFile:populationFile];
+                break;
+            case 2:
+                NSLog(@"main :: Checking All Organisms");
+                [g checkAllSimilarity:workingDir populationFile:populationFile];
+                break;
+            case 3:
+                NSLog(@"main :: Checking Organisms against Fittest");
+                [g checkSimilarity:workingDir populationFile:populationFile];
                 break;
             default:
                 break;

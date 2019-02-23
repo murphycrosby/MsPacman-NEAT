@@ -29,7 +29,7 @@
 @synthesize screen;
 @synthesize msPacman;
 
-- (id) init:(NSString*) workingDir logLevel:(int) logLvl
+- (id) init:(BOOL) debug workingDir:(NSString*) workingDir logLevel:(int) logLvl
 {
     self = [super init];
     
@@ -39,8 +39,10 @@
         NSLog(@"Game :: init :: start");
     }
     
-    keyboard = [[Keyboard alloc] init:1];
-    screen = [[Screenshot alloc] init:workingDir logLevel:1];
+    if (!debug) {
+        keyboard = [[Keyboard alloc] init:1];
+        screen = [[Screenshot alloc] init:workingDir logLevel:1];
+    }
     msPacman = [[MsPacman alloc] init:workingDir logLevel:1];
     
     int seed = 0;
@@ -379,6 +381,158 @@
         }
     }
     NSLog(@"Game :: playBest :: Complete");
+}
+
+- (void) checkSimilarity:(NSString*) workingDir populationFile:(NSString*) populationFile {
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    double max = 0;
+    double min = 1;
+    double sum = 0;
+    double count = 0;
+    Population* population;
+    
+    if(logLevel >= 3) {
+        NSLog(@"Game :: checkSimilarity :: start");
+    }
+    
+    if ([fileManager fileExistsAtPath:populationFile]) {
+        population = [Population loadFromFile:populationFile];
+    } else {
+        NSLog(@"Game :: checkSimilarity :: No population file provided. Exiting.");
+        return;
+    }
+    
+    for (int i = 0; i < population.allSpecies.count; i++) {
+        Species* sp = [population.allSpecies objectAtIndex:i];
+        Organism* fittest = sp.fittestOrganism;
+        min = 1;
+        max = 0;
+        sum = 0;
+        count = 0;
+        
+        for(int j = 0; j < sp.speciesOrganisms.count; j++) {
+            Organism* org = [sp.speciesOrganisms objectAtIndex:j];
+            
+            if([fittest isEqual:org]) {
+                continue;
+            }
+            
+            double val = [fittest.genome similarityScoreWithGenome:org.genome];
+            sum += val;
+            if(val > max) {
+                max = val;
+            }
+            if(val < min) {
+                min = val;
+            }
+            NSLog(@"Fittest == %f == %d (%1.0f)", val, j, org.fitness);
+            count++;
+        }
+        
+        NSLog(@"Game :: checkSimilarity :: -----");
+        NSLog(@"Game :: checkSimilarity :: Species:%i", i);
+        NSLog(@"Game :: checkSimilarity :: Max:%f    Min:%f", max, min);
+        NSLog(@"Game :: checkSimilarity :: Avg:%f  Count:%1.0f", sum/count, count);
+        NSLog(@"Game :: checkSimilarity :: -----");
+    }
+    
+    if(logLevel >= 3) {
+        NSLog(@"Game :: checkSimilarity :: complete");
+    }
+}
+
+- (void) checkAllSimilarity:(NSString*) workingDir populationFile:(NSString*) populationFile {
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    double max = 0;
+    double min = 1;
+    double sum = 0;
+    double count = 0;
+    Population* population;
+    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+    
+    if(logLevel >= 3) {
+        NSLog(@"Game :: checkAllSimilarity :: start");
+    }
+    
+    if ([fileManager fileExistsAtPath:populationFile]) {
+        population = [Population loadFromFile:populationFile];
+    } else {
+        NSLog(@"Game :: checkAllSimilarity :: No population file provided. Exiting.");
+        return;
+    }
+    
+    for(int i = 0; i < population.allOrganisms.count; i++) {
+        Organism* o1 = [population.allOrganisms objectAtIndex:i];
+        
+        for(int j = 0; j < population.allOrganisms.count; j++) {
+            BOOL cont = FALSE;
+            NSArray* arrI = [dict objectForKey:[NSString stringWithFormat:@"%i",i]];
+            for(int k = 0; k < arrI.count; k++) {
+                int intJ = [arrI[k] intValue];
+                if(intJ == j) {
+                    cont = TRUE;
+                    break;
+                }
+            }
+            if(cont) {
+                continue;
+            }
+            NSArray* arrJ = [dict objectForKey:[NSString stringWithFormat:@"%i",j]];
+            for(int k = 0; k < arrJ.count; k++) {
+                int intI = [arrJ[k] intValue];
+                if(intI == i) {
+                    cont = TRUE;
+                    break;
+                }
+            }
+            if(cont) {
+                continue;
+            }
+            
+            Organism* o2 = [population.allOrganisms objectAtIndex:j];
+            if([o1 isEqual:o2]) {
+                continue;
+            }
+            
+            NSMutableArray* newArrI = nil;
+            if(arrI.count > 0) {
+                newArrI = [NSMutableArray arrayWithArray:arrI];
+            } else {
+                newArrI = [[NSMutableArray alloc] init];
+            }
+            [newArrI addObject:[NSNumber numberWithInt:j]];
+            [dict setValue:newArrI forKey:[NSString stringWithFormat:@"%i",i]];
+            
+            NSMutableArray* newArrJ = nil;
+            if(arrJ.count > 0) {
+                newArrJ = [NSMutableArray arrayWithArray:arrJ];
+            } else {
+                newArrJ = [[NSMutableArray alloc] init];
+            }
+            [newArrJ addObject:[NSNumber numberWithInt:i]];
+            [dict setValue:newArrJ forKey:[NSString stringWithFormat:@"%i",j]];
+            
+            double val = [o1.genome similarityScoreWithGenome:o2.genome];
+            sum += val;
+            if(val > max) {
+                max = val;
+            }
+            if(val < min) {
+                min = val;
+            }
+            NSLog(@"%d == %f == %d", i, val, j);
+            count++;
+        }
+    }
+    
+    NSLog(@"Game :: checkAllSimilarity :: -----");
+    NSLog(@"Game :: checkAllSimilarity :: Max:%f    Min:%f", max, min);
+    NSLog(@"Game :: checkAllSimilarity :: Avg:%f  Count:%1.0f", sum/count, count);
+    NSLog(@"Game :: checkAllSimilarity :: -----");
+    
+    if(logLevel >= 3) {
+        NSLog(@"Game :: checkAllSimilarity :: complete");
+    }
 }
 
 -(void) writeTracking:(NSString*) workingDir generation:(int) generation score:(int) score {

@@ -12,7 +12,7 @@
 @implementation Parameters
 
 static int populationSize = 25;
-static int numGenerations = 100;
+static int numGenerations = 75;
 static double mutationProbabilityUpdateWeight = 0.4;
 static double mutationProbabilityReplaceWeight = 0.15;
 static double mutationMaximumPerturbation = 0.05;
@@ -20,20 +20,20 @@ static double chanceMutateWeight = 0.5;
 static double chanceToggleLinks = 0.2;
 static double changeReenableLinks = 0.2;
 static double c1ExcessCoefficient = 1;
-static double c2DisjointCoefficient = 0.64;
+static double c2DisjointCoefficient = 1;
 static double c3weightCoefficient = 0.4;
 //static double speciesCompatibilityThreshold = 0.7;
-static double speciesCompatibilityThreshold = 0.65;
+static double speciesCompatibilityThreshold = 0.27;
 static int speciesAgeSinceImprovementLimit = 15;
 static double speciesPercentOrganismsSurvive = 0.2;
 static int maximumNeurons = 5000;
 //static double chanceAddLink = 0.05;
 //static double chanceAddLink = 0.06;
-static double chanceAddLink = 0.15;
+static double chanceAddLink = 0.20;
 //static double chanceAddNode = 0.04;
 static double chanceAddNode = 0.05;
 static double mutateWeightOnlyDontCrossover = 0.3;
-static double chanceMutate = 0.45;
+static double chanceMutate = 0.8;
 static int youngSpeciesAgeThreshold = 5;
 static double youngSpeciesFitnessBonus = 3;
 static int oldSpeciesAgeThreshold = 15;

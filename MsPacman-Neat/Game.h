@@ -21,9 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,strong) MsPacman* msPacman;
 @property (nonatomic,readwrite) int logLevel;
 
-- (id)init:(NSString*) workingDirectory logLevel:(int)logLvl;
+- (id)init:(BOOL) debug workingDir:(NSString*) workingDir logLevel:(int)logLvl;
 - (void) playEvolve:(NSString*) workingDir populationFile:(NSString*) populationFile;
 - (void) playBest:(NSString*) workingDir populationFile:(NSString*) populationFile;
+- (void) checkSimilarity:(NSString*) workingDir populationFile:(NSString*) populationFile;
+- (void) checkAllSimilarity:(NSString*) workingDir populationFile:(NSString*) populationFile;
 
 @end
 

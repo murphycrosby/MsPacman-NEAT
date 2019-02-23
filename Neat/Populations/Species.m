@@ -154,11 +154,30 @@ static int speciesCounter = 0;
             mumOrganism = swapOrganism;
         }
         if (dadOrganism == mumOrganism || randomDouble() < [Parameters mutateWeightOnlyDontCrossover]) {
+            NSLog(@"Species :: spawnOrganisms :: 1. start");
+            NSLog(@"Species :: spawnOrganisms ::   Dad-Fitness:%1.3f, Nodes:%lu, Links:%lu",
+                  dadOrganism.fitness, dadOrganism.genome.genoNodes.count, dadOrganism.genome.genoLinks.count);
+            
             Organism* childOrganism = [dadOrganism reproduceChildOrganism];
+            
+            NSLog(@"Species :: spawnOrganisms :: Child-Fitness:%1.3f, Nodes:%lu, Links:%lu",
+                  childOrganism.fitness, childOrganism.genome.genoNodes.count, childOrganism.genome.genoLinks.count);
+            
+            NSLog(@"Species :: spawnOrganisms :: 1. complete");
             [newOrganisms addObject:childOrganism];
         }
         else {
+            NSLog(@"Species :: spawnOrganisms :: 2. start");
+            NSLog(@"Species :: spawnOrganisms ::   Dad-Fitness:%1.3f, Nodes:%lu, Links:%lu",
+                  dadOrganism.fitness, dadOrganism.genome.genoNodes.count, dadOrganism.genome.genoLinks.count);
+            NSLog(@"Species :: spawnOrganisms ::   Mom-Fitness:%1.3f, Nodes:%lu, Links:%lu",
+                  mumOrganism.fitness, mumOrganism.genome.genoNodes.count, mumOrganism.genome.genoLinks.count);
+            
             Organism* childOrganism = [dadOrganism reproduceChildOrganismWithOrganism: mumOrganism];
+            
+            NSLog(@"Species :: spawnOrganisms :: Child-Fitness:%1.3f, Nodes:%lu, Links:%lu",
+                  childOrganism.fitness, childOrganism.genome.genoNodes.count, childOrganism.genome.genoLinks.count);
+            NSLog(@"Species :: spawnOrganisms :: 2. complete");
             [newOrganisms addObject:childOrganism];
         }
     }
@@ -181,11 +200,30 @@ static int speciesCounter = 0;
                 mumOrganism = swapOrganism;
             }
             if (dadOrganism == mumOrganism || randomDouble() < [Parameters mutateWeightOnlyDontCrossover]) {
+                NSLog(@"Species :: spawnOrganisms :: 3. start");
+                NSLog(@"Species :: spawnOrganisms ::   Dad-Fitness:%1.3f, Nodes:%lu, Links:%lu",
+                      dadOrganism.fitness, dadOrganism.genome.genoNodes.count, dadOrganism.genome.genoLinks.count);
+                
                 Organism* childOrganism = [dadOrganism reproduceChildOrganism];
+                
+                NSLog(@"Species :: spawnOrganisms :: Child-Fitness:%1.3f, Nodes:%lu, Links:%lu",
+                      childOrganism.fitness, childOrganism.genome.genoNodes.count, childOrganism.genome.genoLinks.count);
+                
+                NSLog(@"Species :: spawnOrganisms :: 3. complete");
                 [newOrganisms addObject:childOrganism];
             }
             else {
+                NSLog(@"Species :: spawnOrganisms :: 4. start");
+                NSLog(@"Species :: spawnOrganisms ::   Dad-Fitness:%1.3f, Nodes:%lu, Links:%lu",
+                      dadOrganism.fitness, dadOrganism.genome.genoNodes.count, dadOrganism.genome.genoLinks.count);
+                NSLog(@"Species :: spawnOrganisms ::   Mom-Fitness:%1.3f, Nodes:%lu, Links:%lu",
+                      mumOrganism.fitness, mumOrganism.genome.genoNodes.count, mumOrganism.genome.genoLinks.count);
+                
                 Organism* childOrganism = [dadOrganism reproduceChildOrganismWithOrganism: mumOrganism];
+                
+                NSLog(@"Species :: spawnOrganisms :: Child-Fitness:%1.3f, Nodes:%lu, Links:%lu",
+                      childOrganism.fitness, childOrganism.genome.genoNodes.count, childOrganism.genome.genoLinks.count);
+                NSLog(@"Species :: spawnOrganisms :: 4. complete");
                 [newOrganisms addObject:childOrganism];
             }
         }
