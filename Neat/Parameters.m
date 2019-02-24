@@ -14,7 +14,7 @@
 static int populationSize = 25;
 static int numGenerations = 75;
 static double mutationProbabilityUpdateWeight = 0.4;
-static double mutationProbabilityReplaceWeight = 0.15;
+static double mutationProbabilityReplaceWeight = 0.10;
 static double mutationMaximumPerturbation = 0.05;
 static double chanceMutateWeight = 0.5;
 static double chanceToggleLinks = 0.2;

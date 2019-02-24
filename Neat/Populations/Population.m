@@ -165,7 +165,7 @@
     NSMutableArray* speciesToDestroy = [[NSMutableArray alloc] init];
     for (Species* nextSpecies in allSpecies) {
         [nextSpecies clearAndAge];
-        if (nextSpecies.ageSinceImprovement > [Parameters speciesAgeSinceImprovementLimit]) {
+        if (allSpecies.count > 1 && nextSpecies.ageSinceImprovement > [Parameters speciesAgeSinceImprovementLimit]) {
             [speciesToDestroy addObject:nextSpecies];
         }
     }
