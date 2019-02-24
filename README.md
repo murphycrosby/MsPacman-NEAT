@@ -1,5 +1,5 @@
 # MsPacman-NEAT
-Playing MsPacman on OpenEmu using Neuroevolution of Augmenting Topologies (NEAT) with Long Shot-term Memory (LSTM) neurons.
+Playing MsPacman on OpenEmu using Neuroevolution of Augmenting Topologies (NEAT) with Long Short-term Memory (LSTM) neurons.
 
 ###### Prerequisites
 * [Karabiner-VirtualHIDDevice](https://github.com/tekezo/Karabiner-VirtualHIDDevice)
