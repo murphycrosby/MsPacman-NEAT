@@ -74,3 +74,13 @@ Current results are after 650 generations, the best network has eaten 119 pellet
 I think a possible improvement could be to add in a Q-Learning peice.  This would take the fittest network from each generation, and perform Q-Learning on it.  Then use it to evolve other networks, thereby increasing the fitness of the population, but also gaining from the evolution of the others.  Then when there are times when mutations are not creating better performing networks, Q-Learning will still make the popultation more fit.
 
 The obvious challenge around this is implementing a backpropagation funtion.  Backpropagation is challenging as it is, but then backpropagating an LSTM neuron adds even more complexity.
+
+### Running the Application  
+1. You will need to add the Karabiner virtual keyboard as stated in the prerequisites.  
+2. Compile the app and navigate to the application in Terminal  
+#### For Evolving  
+*sudo is needed because of the screenshots and using the virtual keyboard  
+`sudo ./MsPacman-Neat playEvolve [location of pop file]/gen-650.pop`
+#### For Playing the Best Network  
+`sudo ./MsPacman-Neat playBest [location of pop file]/gen-650.pop`
+
