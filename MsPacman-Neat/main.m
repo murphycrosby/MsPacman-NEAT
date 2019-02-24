@@ -56,7 +56,7 @@ int main(int argc, const char* argv[]) {
         }
         
         if([workingDir isEqualToString:@""]) {
-            workingDir = @"/users/murphycrosby/misc/";
+            workingDir = @"/misc/";
         }
         NSLog(@"main :: Working Directory: %@", workingDir);
         NSLog(@"main ::   Population File: %@", populationFile);
