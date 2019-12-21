@@ -10,7 +10,7 @@
 #define PhenomeNode_h
 
 #import <Foundation/Foundation.h>
-#import "GenomeNode.h"
+#import "../GenomeType/GenomeNode.h"
 
 @interface PhenomeNode : NSObject {
     //for LSTM

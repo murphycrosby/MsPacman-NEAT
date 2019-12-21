@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Population.h"
-#import "Genome.h"
+#import "../GenomeType/Genome.h"
 #import "Parameters.h"
 #import "Organism.h"
 #import "Utilities.h"

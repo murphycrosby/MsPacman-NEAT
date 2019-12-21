@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "Species.h"
 #import "Organism.h"
-#import "Parameters.h"
-#import "Genome.h"
-#import "Utilities.h"
+#import "../Parameters.h"
+#import "../GenomeType/Genome.h"
+#import "../Utilities.h"
 
 @implementation Species
 @synthesize speciesOrganisms, fittestOrganism, age, ageSinceImprovement;

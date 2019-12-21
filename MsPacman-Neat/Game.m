@@ -83,7 +83,7 @@
             genome = organism.genome;
             fitness = organism.fitness;
         } else {
-            genome = [Genome createGenome:60 outputs:4];
+            genome = [Genome createGenome:23 outputs:4];
         }
         
         population = [Population spawnInitialGenerationFromGenome:genome];
