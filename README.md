@@ -5,7 +5,7 @@ Playing MsPacman on OpenEmu using Neuroevolution of Augmenting Topologies (NEAT)
 * [Karabiner-VirtualHIDDevice](https://github.com/tekezo/Karabiner-VirtualHIDDevice)
   - This is required for the console application to press keys that OpenEmu will register.
   - To load the driver, from a Terminal on MacOS, `sudo kextload org.pqrs.driver.Karabiner.VirtualHIDDevice.v060800.kext`
-  - Although Virtual Keyboards are not supported with OpenEmu, this driver has worked exceptionally well for this project. Reference: [Question: Sending Keyboard Events #3681](https://github.com/OpenEmu/OpenEmu/issues/3681).
+  - Although Virtual Keyboards are not supported with OpenEmu, this driver has worked exceptionally well for this project.
   
 ### Description
 The network starts out with only 1 random link from the 60 inputs to the 4 outputs and builds from there.  
