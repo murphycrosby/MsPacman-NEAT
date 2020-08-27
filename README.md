@@ -70,7 +70,7 @@ Thanks to bentrewhella and his github [An Objective C implementation of the NEAT
 ### Results
 Current results are after 650 generations, the best network has eaten 119 pellets.  There are 218 pellets on the Cherry level, so the network does about as well as a below average human.
 
-### Possbile Improvements
+### Possible Improvements
 I think a possible improvement could be to add in a Q-Learning peice.  This would take the fittest network from each generation, and perform Q-Learning on it.  Then use it to evolve other networks, thereby increasing the fitness of the population, but also gaining from the evolution of the others.  Then when there are times when mutations are not creating better performing networks, Q-Learning will still make the popultation more fit.
 
 The obvious challenge around this is implementing a backpropagation funtion.  Backpropagation is challenging as it is, but then backpropagating an LSTM neuron adds even more complexity.
